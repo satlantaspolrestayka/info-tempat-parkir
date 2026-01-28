@@ -1,0 +1,219 @@
+name: Real-time Monitoring
+
+on:
+  # Run every 5 minutes
+  schedule:
+    - cron: '*/5 * * * *'
+  
+  # Run on push to main branch
+  push:
+    branches: [ main ]
+    paths:
+      - 'data/parkir-data.json'
+      - 'config/**'
+  
+  # Run on workflow dispatch
+  workflow_dispatch:
+    inputs:
+      detailed_report:
+        description: 'Generate detailed report'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+
+jobs:
+  monitor-system:
+    name: Monitor System Health
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install
+        echo "✅ Dependencies installed"
+    
+    - name: Run health check
+      id: health
+      run: |
+        echo "🏥 Running system health check..."
+        node scripts/health-check.js
+        
+        # Capture exit code
+        HEALTH_EXIT_CODE=$?
+        
+        if [ $HEALTH_EXIT_CODE -eq 0 ]; then
+          echo "✅ Health check passed"
+          echo "health_status=healthy" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️ Health check issues found"
+          echo "health_status=issues" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Run consistency monitor
+      id: consistency
+      run: |
+        echo "🔍 Running consistency monitor..."
+        node scripts/monitor-statistics.js
+        
+        # Capture exit code
+        MONITOR_EXIT_CODE=$?
+        
+        if [ $MONITOR_EXIT_CODE -eq 0 ]; then
+          echo "✅ Consistency monitor passed"
+          echo "consistency_status=consistent" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️ Consistency issues found"
+          echo "consistency_status=inconsistent" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Check for high utilization
+      id: utilization
+      run: |
+        echo "📊 Checking for high utilization..."
+        node scripts/notify-utilization.js
+        
+        # The script logs to console, we'll capture issues
+        echo "utilization_checked=true" >> $GITHUB_OUTPUT
+    
+    - name: Verify data integrity
+      id: integrity
+      run: |
+        echo "🔐 Verifying data integrity..."
+        node scripts/verify-consistency.js --quick
+        
+        INTEGRITY_EXIT_CODE=$?
+        
+        if [ $INTEGRITY_EXIT_CODE -eq 0 ]; then
+          echo "✅ Data integrity verified"
+          echo "integrity_status=valid" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Data integrity issues"
+          echo "integrity_status=invalid" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Generate monitoring report
+      if: always()
+      run: |
+        echo "📈 Generating monitoring report..."
+        
+        # Create summary file
+        cat > monitoring-summary.md << EOF
+        # Real-time Monitoring Report
+        
+        Generated: $(date)
+        
+        ## System Status
+        
+        - Health Check: ${{ steps.health.outputs.health_status || 'unknown' }}
+        - Consistency: ${{ steps.consistency.outputs.consistency_status || 'unknown' }}
+        - Data Integrity: ${{ steps.integrity.outputs.integrity_status || 'unknown' }}
+        - Utilization Check: ${{ steps.utilization.outputs.utilization_checked || 'unknown' }}
+        
+        ## Timestamps
+        
+        - Last Check: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        - Next Check: 5 minutes
+        
+        ## System Information
+        
+        - Repository: ${{ github.repository }}
+        - Run ID: ${{ github.run_id }}
+        - Workflow: ${{ github.workflow }}
+        
+        ## Recommendations
+        
+        EOF
+        
+        # Add recommendations based on status
+        if [ "${{ steps.health.outputs.health_status }}" != "healthy" ]; then
+          echo "- Run full health check: \`node scripts/health-check.js\`" >> monitoring-summary.md
+        fi
+        
+        if [ "${{ steps.consistency.outputs.consistency_status }}" != "consistent" ]; then
+          echo "- Fix consistency issues: \`node scripts/fix-statistics.js\`" >> monitoring-summary.md
+        fi
+        
+        if [ "${{ steps.integrity.outputs.integrity_status }}" != "valid" ]; then
+          echo "- Verify data integrity: \`node scripts/verify-consistency.js\`" >> monitoring-summary.md
+        fi
+        
+        # Save report
+        mkdir -p data/reports/monitoring
+        mv monitoring-summary.md data/reports/monitoring/monitoring-$(date +%Y%m%d-%H%M%S).md
+        
+        echo "✅ Report generated"
+    
+    - name: Upload monitoring artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: monitoring-reports
+        path: |
+          data/reports/monitoring/
+          data/logs/monitor-*.log
+        retention-days: 7
+    
+    - name: Create workflow summary
+      if: always()
+      run: |
+        echo "## Real-time Monitoring Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "**Check Time:** $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Health status
+        if [ "${{ steps.health.outputs.health_status }}" = "healthy" ]; then
+          echo "✅ **System Health:** PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ **System Health:** ISSUES DETECTED" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Consistency status
+        if [ "${{ steps.consistency.outputs.consistency_status }}" = "consistent" ]; then
+          echo "✅ **Data Consistency:** PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ **Data Consistency:** ISSUES DETECTED" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Integrity status
+        if [ "${{ steps.integrity.outputs.integrity_status }}" = "valid" ]; then
+          echo "✅ **Data Integrity:** PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Data Integrity:** ISSUES DETECTED" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Next Check:** In 5 minutes" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ steps.health.outputs.health_status }}" != "healthy" ] || \
+           [ "${{ steps.consistency.outputs.consistency_status }}" != "consistent" ] || \
+           [ "${{ steps.integrity.outputs.integrity_status }}" != "valid" ]; then
+          echo "🚨 **ACTION REQUIRED:** Check the logs and run appropriate fix scripts" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "*Automated monitoring by GitHub Actions*" >> $GITHUB_STEP_SUMMARY
+    
+    - name: Send alert on critical issues
+      if: steps.health.outputs.health_status == 'issues' || steps.integrity.outputs.integrity_status == 'invalid'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      run: |
+        echo "🚨 Critical issues detected, would send alert"
+        # In a real implementation, this would send to Slack/Email/etc.
+        # For now, just log
+        echo "Critical alert would be sent via configured channel"
