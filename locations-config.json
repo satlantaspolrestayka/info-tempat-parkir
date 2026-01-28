@@ -1,0 +1,272 @@
+{
+  "version": "2.0.0",
+  "last_updated": "2026-01-28T10:00:00Z",
+  "operation": {
+    "name": "Operasi Ketupat Progo 2026",
+    "period": "20-26 April 2026",
+    "organization": "Satlantas Polresta Yogyakarta"
+  },
+  "locations": [
+    {
+      "id": 1,
+      "code": "SENOPATI",
+      "name": "SENOPATI",
+      "address": "JL P. SENOPATI",
+      "coordinates": "-7.8017074,110.3681792",
+      "capacity": {
+        "bus": { "total": 62, "unit": "unit" },
+        "mobil": { "total": 200, "unit": "unit" },
+        "motor": { "total": 0, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["bus", "mobil"],
+      "notes": "Parkir bus dan mobil"
+    },
+    {
+      "id": 2,
+      "code": "NGABEAN",
+      "name": "NGABEAN",
+      "address": "JL W. HASYIM",
+      "coordinates": "-7.8014685,110.3562862",
+      "capacity": {
+        "bus": { "total": 60, "unit": "unit" },
+        "mobil": { "total": 80, "unit": "unit" },
+        "motor": { "total": 100, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["bus", "mobil", "motor"],
+      "notes": "Parkir bus, mobil, dan motor"
+    },
+    {
+      "id": 3,
+      "code": "SRIWEDANI",
+      "name": "SRI WEDANI",
+      "address": "JL SRI WEDANI",
+      "coordinates": "-7.800385,110.368361",
+      "capacity": {
+        "bus": { "total": 0, "unit": "unit" },
+        "mobil": { "total": 60, "unit": "unit" },
+        "motor": { "total": 250, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["mobil", "motor"],
+      "notes": "Parkir mobil dan motor"
+    },
+    {
+      "id": 4,
+      "code": "SPRAGA",
+      "name": "SPRAGA",
+      "address": "JL KHA DAHLAN",
+      "coordinates": "-7.8018505,110.3632816",
+      "capacity": {
+        "bus": { "total": 0, "unit": "unit" },
+        "mobil": { "total": 130, "unit": "unit" },
+        "motor": { "total": 0, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["mobil"],
+      "notes": "Parkir mobil"
+    },
+    {
+      "id": 5,
+      "code": "RAMAIMALL",
+      "name": "RAMAI MALL",
+      "address": "JL BESKALAN",
+      "coordinates": "-7.7973211,110.3641841",
+      "capacity": {
+        "bus": { "total": 0, "unit": "unit" },
+        "mobil": { "total": 20, "unit": "unit" },
+        "motor": { "total": 382, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["mobil", "motor"],
+      "notes": "Parkir mobil dan motor"
+    },
+    {
+      "id": 6,
+      "code": "GRANDZURI",
+      "name": "GRAND ZURI",
+      "address": "JL MARGO UTOMO",
+      "coordinates": "-7.787088,110.366706",
+      "capacity": {
+        "bus": { "total": 100, "unit": "unit" },
+        "mobil": { "total": 50, "unit": "unit" },
+        "motor": { "total": 0, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["bus", "mobil"],
+      "notes": "Parkir bus dan mobil"
+    },
+    {
+      "id": 7,
+      "code": "EXMENARACAFE",
+      "name": "EX MENARA CAFE",
+      "address": "JL ABU BAKAR ALI",
+      "coordinates": "-7.7897929,110.3706896",
+      "capacity": {
+        "bus": { "total": 20, "unit": "unit" },
+        "mobil": { "total": 50, "unit": "unit" },
+        "motor": { "total": 0, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["bus", "mobil"],
+      "notes": "Parkir bus dan mobil"
+    },
+    {
+      "id": 8,
+      "code": "MALIOBORO2",
+      "name": "MALIOBORO II",
+      "address": "JL PABRINGAN",
+      "coordinates": "-7.7992907,110.3663957",
+      "capacity": {
+        "bus": { "total": 0, "unit": "unit" },
+        "mobil": { "total": 115, "unit": "unit" },
+        "motor": { "total": 250, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["mobil", "motor"],
+      "notes": "Parkir mobil dan motor"
+    },
+    {
+      "id": 9,
+      "code": "MALIOBORO3",
+      "name": "MALIOBORO III",
+      "address": "JL KETANDAN 7",
+      "coordinates": "-7.7978843,110.3673653",
+      "capacity": {
+        "bus": { "total": 0, "unit": "unit" },
+        "mobil": { "total": 125, "unit": "unit" },
+        "motor": { "total": 0, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["mobil"],
+      "notes": "Parkir mobil"
+    },
+    {
+      "id": 10,
+      "code": "UTARACAVINTON",
+      "name": "UTARA CAVINTON",
+      "address": "JL LETJEND SUPRAPTO",
+      "coordinates": "-7.8002542,110.3560535",
+      "capacity": {
+        "bus": { "total": 40, "unit": "unit" },
+        "mobil": { "total": 150, "unit": "unit" },
+        "motor": { "total": 0, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["bus", "mobil"],
+      "notes": "Parkir bus dan mobil"
+    },
+    {
+      "id": 11,
+      "code": "GEMBIRALOKA",
+      "name": "GEMBIRA LOKA",
+      "address": "JL KEBUN RAYA",
+      "coordinates": "-7.8037595,110.3968204",
+      "capacity": {
+        "bus": { "total": 82, "unit": "unit" },
+        "mobil": { "total": 100, "unit": "unit" },
+        "motor": { "total": 300, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["bus", "mobil", "motor"],
+      "notes": "Parkir bus, mobil, dan motor"
+    },
+    {
+      "id": 12,
+      "code": "KAWULAALIT",
+      "name": "KAWULA ALIT",
+      "address": "JL GANDEKAN",
+      "coordinates": "-7.7920043,110.3611007",
+      "capacity": {
+        "bus": { "total": 0, "unit": "unit" },
+        "mobil": { "total": 100, "unit": "unit" },
+        "motor": { "total": 200, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["mobil", "motor"],
+      "notes": "Parkir mobil dan motor"
+    },
+    {
+      "id": 13,
+      "code": "PARKIRANKOMANDO",
+      "name": "PARKIRAN KOMANDO",
+      "address": "JL SUDIRMAN",
+      "coordinates": "-7.7832641,110.3683152",
+      "capacity": {
+        "bus": { "total": 0, "unit": "unit" },
+        "mobil": { "total": 60, "unit": "unit" },
+        "motor": { "total": 200, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["mobil", "motor"],
+      "notes": "Parkir mobil dan motor"
+    },
+    {
+      "id": 14,
+      "code": "EKSTRIO",
+      "name": "EKS TRIO",
+      "address": "JL MARGOUTOMO",
+      "coordinates": "-7.7883952,110.36693",
+      "capacity": {
+        "bus": { "total": 130, "unit": "unit" },
+        "mobil": { "total": 300, "unit": "unit" },
+        "motor": { "total": 0, "unit": "unit" }
+      },
+      "operational_hours": "06:00-22:00",
+      "status": "active",
+      "vehicle_types": ["bus", "mobil"],
+      "notes": "Parkir bus dan mobil"
+    },
+    {
+      "id": 15,
+      "code": "KRIDOSONO",
+      "name": "STADION KRIDOSONO",
+      "address": "JL YOS SUDARSO",
+      "coordinates": "-7.7877683,110.3736898",
+      "capacity": {
+        "bus": { "total": 0, "unit": "unit" },
+        "mobil": { "total": 0, "unit": "unit" },
+        "motor": { "total": 0, "unit": "unit" }
+      },
+      "operational_hours": "18:00-24:00",
+      "status": "special",
+      "vehicle_types": [],
+      "notes": "Operasional khusus Ops Ketupat 2026. 20-22 April: 30 Mobil, 150 Motor | 23-26 April: 250 Mobil, 250 Motor",
+      "special_operation": {
+        "period1": "20-22 April 2026",
+        "period2": "23-26 April 2026",
+        "opening_time": "18.00 WIB"
+      }
+    }
+  ],
+  "total_capacity": {
+    "bus": 454,
+    "mobil": 1690,
+    "motor": 1682,
+    "total": 3826
+  },
+  "vehicle_icons": {
+    "bus": "🚌",
+    "mobil": "🚗",
+    "motor": "🏍️"
+  },
+  "vehicle_names": {
+    "bus": "BUS",
+    "mobil": "MOBIL",
+    "motor": "MOTOR"
+  }
+}
