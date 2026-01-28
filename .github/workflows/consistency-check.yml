@@ -1,0 +1,140 @@
+name: Consistency Check (Every 5 Minutes)
+
+on:
+  schedule:
+    # Run every 5 minutes during operational hours (06:00-22:00 UTC+7)
+    - cron: '*/5 23-15 * * *'  # 23-15 UTC = 06:00-22:00 UTC+7
+    
+  workflow_dispatch:  # Manual trigger
+    inputs:
+      force_fix:
+        description: 'Force fix inconsistencies'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  check-consistency:
+    name: Check Data Consistency
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 1
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install
+        echo "✅ Dependencies installed"
+    
+    - name: Load configuration
+      id: config
+      run: |
+        echo "📋 Loading system configuration..."
+        if [ -f "config/system-settings.json" ]; then
+          echo "✅ Config loaded"
+          echo "check_interval=120000" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️ Using default settings"
+          echo "check_interval=120000" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Run consistency monitor
+      id: monitor
+      run: |
+        echo "🔍 Running consistency monitor..."
+        node scripts/monitor-statistics.js
+        
+        # Capture exit code
+        MONITOR_EXIT_CODE=$?
+        
+        if [ $MONITOR_EXIT_CODE -eq 0 ]; then
+          echo "✅ Monitor completed successfully"
+          echo "needs_fix=false" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️ Issues detected, may need fixing"
+          echo "needs_fix=true" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Run fix if needed
+      if: steps.monitor.outputs.needs_fix == 'true' || github.event.inputs.force_fix == 'true'
+      run: |
+        echo "🔧 Running statistics fixer..."
+        node scripts/fix-statistics.js
+        
+        # Check if fix was successful
+        if [ $? -eq 0 ]; then
+          echo "✅ Statistics fixed successfully"
+        else
+          echo "❌ Fix failed"
+          exit 1
+        fi
+    
+    - name: Commit and push fixes
+      if: steps.monitor.outputs.needs_fix == 'true' && github.event.inputs.force_fix != 'true'
+      run: |
+        # Check if there are changes
+        if git diff --quiet data/parkir-data.json; then
+          echo "⏭️ No changes to commit"
+          exit 0
+        fi
+        
+        # Setup git
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        
+        # Commit changes
+        git add data/parkir-data.json
+        git commit -m "🔄 Auto-fix data consistency
+        
+        - Fixed by consistency check workflow
+        - Timestamp: $(date +'%H:%M:%S')
+        - Trigger: ${{ github.event_name }}"
+        
+        # Push changes
+        git push
+        
+        echo "✅ Changes pushed to repository"
+    
+    - name: Upload monitoring report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: consistency-report
+        path: |
+          data/logs/monitor-*.log
+          data/backups/pre-fix-*.json
+        retention-days: 7
+    
+    - name: Create summary
+      if: always()
+      run: |
+        echo "## Data Consistency Check Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Run Time:** $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ steps.monitor.outputs.needs_fix }}" = "true" ]; then
+          echo "⚠️ **Status:** Issues detected and fixed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Action:** Statistics were automatically corrected" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ **Status:** All data consistent" >> $GITHUB_STEP_SUMMARY
+          echo "📊 **Action:** No fixes needed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Next Check:** In 5 minutes" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "*Automated by GitHub Actions*" >> $GITHUB_STEP_SUMMARY
