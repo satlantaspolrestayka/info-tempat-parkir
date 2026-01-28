@@ -1,0 +1,58 @@
+# Robots.txt for Parking Information System
+User-agent: *
+Allow: /
+Disallow: /admin-petugas.html
+Disallow: /data/
+Disallow: /scripts/
+Disallow: /config/
+Disallow: /tests/
+Disallow: /.github/
+
+# Sitemap
+Sitemap: https://satlantaspolrestayka.github.io/ops-ketupat-progo-2026/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 10
+
+# Allow indexing of public pages
+Allow: /index.html
+Allow: /manifest.json
+
+# Disallow parameters
+Disallow: /*?*
+Disallow: /*.json$
+Disallow: /*.js$
+
+# Additional rules for search engines
+User-agent: Googlebot
+Allow: /index.html
+Allow: /manifest.json
+Disallow: /admin-petugas.html
+Disallow: /data/
+Crawl-delay: 5
+
+User-agent: Bingbot
+Allow: /index.html
+Disallow: /admin-petugas.html
+Disallow: /data/
+Crawl-delay: 5
+
+User-agent: YandexBot
+Allow: /index.html
+Disallow: /admin-petugas.html
+Disallow: /data/
+Crawl-delay: 10
+
+User-agent: DuckDuckBot
+Allow: /index.html
+Disallow: /admin-petugas.html
+Disallow: /data/
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: *
+Disallow: /wp-admin/
+Disallow: /wp-includes/
+Disallow: /wp-content/plugins/
+Disallow: /wp-content/themes/
