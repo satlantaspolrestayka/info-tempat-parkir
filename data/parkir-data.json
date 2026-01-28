@@ -1,0 +1,526 @@
+{
+  "metadata": {
+    "last_updated": "2026-01-28T10:00:00Z",
+    "updated_by": "system",
+    "version": "2.0.0",
+    "total_locations": 15,
+    "operation_name": "Ops Ketupat Progo 2026",
+    "operation_period": "20-26 April 2026",
+    "data_source": "config/locations-config.json",
+    "validation_status": "validated"
+  },
+  "statistics": {
+    "total_bus_capacity": 454,
+    "total_mobil_capacity": 1690,
+    "total_motor_capacity": 1682,
+    "total_available_bus": 454,
+    "total_available_mobil": 1690,
+    "total_available_motor": 1682,
+    "utilization_percent": {
+      "bus": "0.0",
+      "mobil": "0.0",
+      "motor": "0.0",
+      "overall": "0.0"
+    },
+    "update_count_today": 0,
+    "last_processed": "2026-01-28T10:00:00Z",
+    "last_validated": "2026-01-28T10:00:00Z",
+    "consistency_check": "passed"
+  },
+  "locations": [
+    {
+      "id": 1,
+      "nama": "SENOPATI",
+      "alamat": "JL P. SENOPATI",
+      "bus": {
+        "total": 62,
+        "available": 62,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "mobil": {
+        "total": 200,
+        "available": 200,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "koordinat": "-7.8017074,110.3681792",
+      "status": "open",
+      "petugas": "P001SEN",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "nama": "NGABEAN",
+      "alamat": "JL W. HASYIM",
+      "bus": {
+        "total": 60,
+        "available": 60,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "mobil": {
+        "total": 80,
+        "available": 80,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 100,
+        "available": 100,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "koordinat": "-7.8014685,110.3562862",
+      "status": "open",
+      "petugas": "P002NGA",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "nama": "SRI WEDANI",
+      "alamat": "JL SRI WEDANI",
+      "bus": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "mobil": {
+        "total": 60,
+        "available": 60,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 250,
+        "available": 250,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "koordinat": "-7.800385,110.368361",
+      "status": "open",
+      "petugas": "P003SRI",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 4,
+      "nama": "SPRAGA",
+      "alamat": "JL KHA DAHLAN",
+      "bus": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "mobil": {
+        "total": 130,
+        "available": 130,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "koordinat": "-7.8018505,110.3632816",
+      "status": "open",
+      "petugas": "P004SPR",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 5,
+      "nama": "RAMAI MALL",
+      "alamat": "JL BESKALAN",
+      "bus": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "mobil": {
+        "total": 20,
+        "available": 20,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 382,
+        "available": 382,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "koordinat": "-7.7973211,110.3641841",
+      "status": "open",
+      "petugas": "P005RAM",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 6,
+      "nama": "GRAND ZURI",
+      "alamat": "JL MARGO UTOMO",
+      "bus": {
+        "total": 100,
+        "available": 100,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "mobil": {
+        "total": 50,
+        "available": 50,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "koordinat": "-7.787088,110.366706",
+      "status": "open",
+      "petugas": "P006GRZ",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 7,
+      "nama": "EX MENARA CAFE",
+      "alamat": "JL ABU BAKAR ALI",
+      "bus": {
+        "total": 20,
+        "available": 20,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "mobil": {
+        "total": 50,
+        "available": 50,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "koordinat": "-7.7897929,110.3706896",
+      "status": "open",
+      "petugas": "P007EXM",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 8,
+      "nama": "MALIOBORO II",
+      "alamat": "JL PABRINGAN",
+      "bus": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "mobil": {
+        "total": 115,
+        "available": 115,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 250,
+        "available": 250,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "koordinat": "-7.7992907,110.3663957",
+      "status": "open",
+      "petugas": "P008MAL",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 9,
+      "nama": "MALIOBORO III",
+      "alamat": "JL KETANDAN 7",
+      "bus": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "mobil": {
+        "total": 125,
+        "available": 125,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "koordinat": "-7.7978843,110.3673653",
+      "status": "open",
+      "petugas": "P009MA3",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 10,
+      "nama": "UTARA CAVINTON",
+      "alamat": "JL LETJEND SUPRAPTO",
+      "bus": {
+        "total": 40,
+        "available": 40,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "mobil": {
+        "total": 150,
+        "available": 150,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "koordinat": "-7.8002542,110.3560535",
+      "status": "open",
+      "petugas": "P010UTA",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 11,
+      "nama": "GEMBIRA LOKA",
+      "alamat": "JL KEBUN RAYA",
+      "bus": {
+        "total": 82,
+        "available": 82,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "mobil": {
+        "total": 100,
+        "available": 100,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 300,
+        "available": 300,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "koordinat": "-7.8037595,110.3968204",
+      "status": "open",
+      "petugas": "P011GEM",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 12,
+      "nama": "KAWULA ALIT",
+      "alamat": "JL GANDEKAN",
+      "bus": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "mobil": {
+        "total": 100,
+        "available": 100,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 200,
+        "available": 200,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "koordinat": "-7.7920043,110.3611007",
+      "status": "open",
+      "petugas": "P012KAW",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 13,
+      "nama": "PARKIRAN KOMANDO",
+      "alamat": "JL SUDIRMAN",
+      "bus": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "mobil": {
+        "total": 60,
+        "available": 60,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 200,
+        "available": 200,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "koordinat": "-7.7832641,110.3683152",
+      "status": "open",
+      "petugas": "P013PAR",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 14,
+      "nama": "EKS TRIO",
+      "alamat": "JL MARGOUTOMO",
+      "bus": {
+        "total": 130,
+        "available": 130,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "mobil": {
+        "total": 300,
+        "available": 300,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "empty"
+      },
+      "motor": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "koordinat": "-7.7883952,110.36693",
+      "status": "open",
+      "petugas": "P014EKS",
+      "operational_hours": "06:00-22:00",
+      "notes": "",
+      "last_validation": "2026-01-28T10:00:00Z"
+    },
+    {
+      "id": 15,
+      "nama": "STADION KRIDOSONO",
+      "alamat": "JL YOS SUDARSO",
+      "bus": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "mobil": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "motor": {
+        "total": 0,
+        "available": 0,
+        "last_update": "2026-04-20T08:00:00Z",
+        "updated_by": "system",
+        "status": "not_available"
+      },
+      "koordinat": "-7.7877683,110.3736898",
+      "status": "special",
+      "petugas": "P015KRI",
+      "operational_hours": "18:00-24:00",
+      "notes": "Operasional khusus Ops Ketupat 2026. 20-22 April: 30 Mobil, 150 Motor | 23-26 April: 250 Mobil, 250 Motor",
+      "special_operation": {
+        "period1": {
+          "date": "20-22 April 2026",
+          "time": "18.00 WIB",
+          "mobil": 30,
+          "motor": 150
+        },
+        "period2": {
+          "date": "23-26 April 2026",
+          "time": "18.00 WIB",
+          "mobil": 250,
+          "motor": 250
+        }
+      },
+      "last_validation": "2026-01-28T10:00:00Z"
+    }
+  ]
+}
