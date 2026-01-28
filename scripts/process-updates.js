@@ -1,4 +1,4 @@
-// scripts/process-updates.js
+// scripts/process-updates.js - COMPATIBLE VERSION
 const fs = require('fs').promises;
 const path = require('path');
 const { execSync } = require('child_process');
@@ -72,7 +72,7 @@ class UpdateProcessor {
       ]);
 
       const data = JSON.parse(dataContent);
-      const pendingUpdates = JSON.parse(pendingContent);
+      let pendingUpdates = JSON.parse(pendingContent);
 
       // Validate data structure
       if (!data.locations || !Array.isArray(data.locations)) {
@@ -95,14 +95,18 @@ class UpdateProcessor {
     const errors = [];
     const warnings = [];
 
-    // Required fields
-    if (!update.location || !update.timestamp) {
-      errors.push('Missing required fields (location, timestamp)');
+    // Required fields - SESUAI dengan workflow
+    if (!update.location_id || typeof update.location_id !== 'string') {
+      errors.push('Missing location_id');
     }
 
-    // Validate vehicle data
+    if (!update.petugas_name || typeof update.petugas_name !== 'string') {
+      errors.push('Missing petugas_name');
+    }
+
+    // Validate vehicle data - SESUAI dengan format direct fields
     const validateVehicle = (type, value, maxCapacity) => {
-      if (value === undefined || value === null) return;
+      if (value === undefined || value === null) return null;
       
       const numValue = parseInt(value);
       if (isNaN(numValue)) {
@@ -125,18 +129,18 @@ class UpdateProcessor {
 
     const processedData = {};
     
-    if (update.data.bus !== undefined && location.bus.total > 0) {
-      const validValue = validateVehicle('bus', update.data.bus, location.bus.total);
+    if (update.bus !== undefined && location.bus.total > 0) {
+      const validValue = validateVehicle('bus', update.bus, location.bus.total);
       if (validValue !== null) processedData.bus = validValue;
     }
 
-    if (update.data.mobil !== undefined && location.mobil.total > 0) {
-      const validValue = validateVehicle('mobil', update.data.mobil, location.mobil.total);
+    if (update.mobil !== undefined && location.mobil.total > 0) {
+      const validValue = validateVehicle('mobil', update.mobil, location.mobil.total);
       if (validValue !== null) processedData.mobil = validValue;
     }
 
-    if (update.data.motor !== undefined && location.motor.total > 0) {
-      const validValue = validateVehicle('motor', update.data.motor, location.motor.total);
+    if (update.motor !== undefined && location.motor.total > 0) {
+      const validValue = validateVehicle('motor', update.motor, location.motor.total);
       if (validValue !== null) processedData.motor = validValue;
     }
 
@@ -158,9 +162,9 @@ class UpdateProcessor {
       // Load data
       const { data, pendingUpdates } = await this.loadData();
       
-      // Filter unprocessed updates
+      // Filter unprocessed updates - SESUAI dengan workflow
       const unprocessed = pendingUpdates.filter(u => 
-        !u.processed_at && u.status !== 'processed'
+        u.status === 'pending' || (!u.status && !u.processed_at)
       );
       
       if (unprocessed.length === 0) {
@@ -184,10 +188,10 @@ class UpdateProcessor {
       // Process each update
       for (const update of unprocessed) {
         try {
-          // Find location
-          const location = data.locations.find(l => l.nama === update.location);
+          // Find location by nama (location_id = nama lokasi)
+          const location = data.locations.find(l => l.nama === update.location_id);
           if (!location) {
-            throw new Error(`Location not found: ${update.location}`);
+            throw new Error(`Location not found: ${update.location_id}`);
           }
 
           // Validate update
@@ -253,20 +257,20 @@ class UpdateProcessor {
           update.failed_at = new Date().toISOString();
           results.failed.push(update);
           
-          await this.log(`Failed to process update for ${update.location}`, 'error', {
+          await this.log(`Failed to process update for ${update.location_id}`, 'error', {
             error: error.message
           });
         }
       }
 
-      // Update pending file
+      // Update pending file - maintain workflow format
       const updatedPending = pendingUpdates.map(pending => {
         const processed = results.processed.find(p => 
-          p.location === pending.location && 
+          p.location_id === pending.location_id && 
           p.timestamp === pending.timestamp
         );
         const failed = results.failed.find(f => 
-          f.location === pending.location && 
+          f.location_id === pending.location_id && 
           f.timestamp === pending.timestamp
         );
         return processed || failed || pending;
