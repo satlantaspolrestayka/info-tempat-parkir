@@ -1,0 +1,95 @@
+{
+  "version": "1.0.0",
+  "vehicle_types": {
+    "bus": {
+      "id": "bus",
+      "name": "Bus",
+      "description": "Kendaraan angkutan massal ukuran besar",
+      "icon": "🚌",
+      "color": "#DC2626",
+      "capacity_unit": "unit",
+      "min_capacity": 0,
+      "max_capacity": 200,
+      "average_length": 12,
+      "average_width": 2.5,
+      "parking_space_per_unit": 30,
+      "notes": "Parkir khusus bus dengan akses khusus"
+    },
+    "mobil": {
+      "id": "mobil",
+      "name": "Mobil",
+      "description": "Kendaraan penumpang ukuran kecil hingga sedang",
+      "icon": "🚗",
+      "color": "#2563EB",
+      "capacity_unit": "unit",
+      "min_capacity": 0,
+      "max_capacity": 1000,
+      "average_length": 4.5,
+      "average_width": 1.8,
+      "parking_space_per_unit": 12.5,
+      "notes": "Parkir mobil standar, termasuk MPV dan SUV"
+    },
+    "motor": {
+      "id": "motor",
+      "name": "Motor",
+      "description": "Kendaraan roda dua",
+      "icon": "🏍️",
+      "color": "#059669",
+      "capacity_unit": "unit",
+      "min_capacity": 0,
+      "max_capacity": 2000,
+      "average_length": 2,
+      "average_width": 0.8,
+      "parking_space_per_unit": 1.2,
+      "notes": "Parkir motor dengan sistem baris"
+    }
+  },
+  "parking_standards": {
+    "bus_parking_area": 30,
+    "car_parking_area": 12.5,
+    "motorcycle_parking_area": 1.2,
+    "aisle_width": 6,
+    "turning_radius": 12,
+    "access_road_width": 4
+  },
+  "status_definitions": {
+    "empty": {
+      "name": "Kosong",
+      "description": "Tidak ada kendaraan terparkir",
+      "color": "#10B981",
+      "threshold": 100
+    },
+    "available": {
+      "name": "Tersedia",
+      "description": "Masih banyak tersedia",
+      "color": "#3B82F6",
+      "threshold": 70
+    },
+    "limited": {
+      "name": "Terbatas",
+      "description": "Hanya sedikit tersedia",
+      "color": "#F59E0B",
+      "threshold": 30
+    },
+    "full": {
+      "name": "Penuh",
+      "description": "Tidak tersedia lagi",
+      "color": "#EF4444",
+      "threshold": 0
+    },
+    "not_available": {
+      "name": "Tidak Tersedia",
+      "description": "Tidak melayani jenis kendaraan ini",
+      "color": "#6B7280",
+      "threshold": -1
+    }
+  },
+  "validation_rules": {
+    "must_be_integer": true,
+    "cannot_exceed_total": true,
+    "cannot_be_negative": true,
+    "allow_zero": true,
+    "allow_empty_string": false,
+    "max_notes_length": 500
+  }
+}
