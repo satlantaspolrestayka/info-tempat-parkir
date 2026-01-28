@@ -1,0 +1,86 @@
+{
+  "version": "1.0.0",
+  "notification_settings": {
+    "enabled": true,
+    "method": "console", // console, email, slack, telegram
+    "log_level": "info" // error, warn, info, debug
+  },
+  "thresholds": {
+    "utilization": {
+      "warning": 80,  // 80% - kirim warning
+      "critical": 95  // 95% - kirim alert critical
+    },
+    "data_consistency": {
+      "max_difference": 5  // maksimal perbedaan 5 unit
+    },
+    "time_based": {
+      "no_update_alert_hours": 2,  // alert jika tidak ada update 2 jam
+      "backup_reminder_days": 7    // reminder backup setiap 7 hari
+    }
+  },
+  "alert_channels": {
+    "email": {
+      "enabled": false,
+      "recipients": ["admin@satlantas.jogja.id"],
+      "smtp_server": "smtp.gmail.com",
+      "port": 587
+    },
+    "slack": {
+      "enabled": false,
+      "webhook_url": "",
+      "channel": "#parkir-alerts"
+    },
+    "telegram": {
+      "enabled": false,
+      "bot_token": "",
+      "chat_id": ""
+    },
+    "whatsapp": {
+      "enabled": false,
+      "api_key": "",
+      "phone_number": "+6281234567890"
+    }
+  },
+  "alert_templates": {
+    "high_utilization": {
+      "title": "🚨 PARKIR HAMPIR PENUH",
+      "message": "Lokasi {location} mencapai {utilization}% utilisasi. Kapasitas tersisa: {available}/{total}"
+    },
+    "data_inconsistency": {
+      "title": "⚠️ DATA TIDAK KONSISTEN",
+      "message": "Perbedaan data ditemukan di {location}. Dihitung: {calculated}, Dilaporkan: {reported}"
+    },
+    "no_update": {
+      "title": "⏰ TIDAK ADA UPDATE",
+      "message": "Lokasi {location} belum diupdate selama {hours} jam"
+    },
+    "system_error": {
+      "title": "❌ SISTEM ERROR",
+      "message": "Error: {error_message} pada {timestamp}"
+    }
+  },
+  "scheduled_reports": {
+    "daily": {
+      "enabled": true,
+      "time": "08:00",
+      "recipients": ["supervisor@satlantas.jogja.id"]
+    },
+    "weekly": {
+      "enabled": true,
+      "day": "monday",
+      "time": "09:00"
+    }
+  },
+  "emergency_contacts": [
+    {
+      "name": "Koordinator Parkir",
+      "phone": "+628112345678",
+      "role": "primary"
+    },
+    {
+      "name": "Teknisi IT",
+      "phone": "+628198765432",
+      "role": "technical"
+    }
+  ]
+}
