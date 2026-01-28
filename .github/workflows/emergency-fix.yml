@@ -1,0 +1,311 @@
+name: Emergency Fix Procedures
+
+on:
+  # Manual trigger only - for emergencies
+  workflow_dispatch:
+    inputs:
+      emergency_type:
+        description: 'Type of emergency'
+        required: true
+        default: 'data_corruption'
+        type: choice
+        options:
+          - data_corruption
+          - statistics_mismatch
+          - backup_restore
+          - full_reset
+          - system_recovery
+      force_fix:
+        description: 'Force fix without confirmation'
+        required: false
+        default: 'false'
+      backup_before:
+        description: 'Create backup before fixing'
+        required: false
+        default: 'true'
+
+permissions:
+  contents: write
+
+jobs:
+  emergency-fix:
+    name: Emergency Fix - ${{ github.event.inputs.emergency_type }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 1
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install
+        echo "✅ Dependencies installed"
+    
+    - name: Validate emergency type
+      id: validate
+      run: |
+        echo "🚨 Emergency Type: ${{ github.event.inputs.emergency_type }}"
+        echo "Force Fix: ${{ github.event.inputs.force_fix }}"
+        echo "Backup Before: ${{ github.event.inputs.backup_before }}"
+        
+        # Create emergency log entry
+        cat > emergency-log.json << EOF
+        {
+          "emergency_type": "${{ github.event.inputs.emergency_type }}",
+          "triggered_at": "$(date -Iseconds)",
+          "triggered_by": "${{ github.actor }}",
+          "run_id": "${{ github.run_id }}",
+          "force_fix": ${{ github.event.inputs.force_fix }},
+          "backup_before": ${{ github.event.inputs.backup_before }}
+        }
+        EOF
+        
+        mkdir -p data/logs/emergencies
+        mv emergency-log.json data/logs/emergencies/emergency-${{ github.run_id }}.json
+    
+    - name: Create emergency backup
+      if: github.event.inputs.backup_before == 'true'
+      run: |
+        echo "💾 Creating emergency backup before fix..."
+        node scripts/backup-manager.js --git
+        
+        echo "✅ Emergency backup created"
+    
+    - name: Data Corruption Fix
+      if: github.event.inputs.emergency_type == 'data_corruption'
+      run: |
+        echo "🔧 Fixing data corruption..."
+        
+        # Step 1: Check current status
+        echo "📊 Current data status:"
+        node scripts/health-check.js --check
+        
+        # Step 2: Run emergency recovery
+        echo "🔄 Running emergency recovery..."
+        node scripts/emergency-recovery.js --auto
+        
+        # Step 3: Verify fix
+        echo "✅ Recovery completed, verifying..."
+        node scripts/health-check.js --check
+    
+    - name: Statistics Mismatch Fix
+      if: github.event.inputs.emergency_type == 'statistics_mismatch'
+      run: |
+        echo "📈 Fixing statistics mismatch..."
+        
+        # Step 1: Show current mismatch
+        echo "📊 Current statistics:"
+        node scripts/monitor-statistics.js
+        
+        # Step 2: Fix statistics
+        echo "🔧 Fixing statistics..."
+        node scripts/fix-statistics.js
+        
+        # Step 3: Verify fix
+        echo "✅ Verifying fix..."
+        node scripts/verify-consistency.js
+    
+    - name: Backup Restore
+      if: github.event.inputs.emergency_type == 'backup_restore'
+      run: |
+        echo "💾 Restoring from backup..."
+        
+        # List available backups
+        echo "📦 Available backups:"
+        node scripts/backup-manager.js --list
+        
+        # Restore from latest backup
+        echo "🔄 Restoring from latest backup..."
+        node scripts/emergency-recovery.js --restore latest
+        
+        echo "✅ Backup restored"
+    
+    - name: Full System Reset
+      if: github.event.inputs.emergency_type == 'full_reset'
+      run: |
+        echo "🔄 Performing full system reset..."
+        
+        # Step 1: Reset all data
+        echo "📊 Resetting all data to full capacity..."
+        node scripts/emergency-recovery.js --reset
+        
+        # Step 2: Sync configuration
+        echo "⚙️ Syncing configuration..."
+        node scripts/sync-config.js
+        
+        # Step 3: Validate system
+        echo "✅ Validating system..."
+        node scripts/health-check.js
+    
+    - name: System Recovery
+      if: github.event.inputs.emergency_type == 'system_recovery'
+      run: |
+        echo "🏥 Performing full system recovery..."
+        
+        # Run comprehensive recovery
+        echo "🔧 Running comprehensive recovery..."
+        node scripts/emergency-recovery.js --auto
+        
+        echo "🔄 Syncing all configurations..."
+        node scripts/sync-config.js --all
+        
+        echo "📊 Fixing statistics..."
+        node scripts/fix-statistics.js
+        
+        echo "✅ Recovery completed"
+    
+    - name: Verify fix results
+      if: always()
+      run: |
+        echo "🔍 Verifying fix results..."
+        
+        # Run health check
+        HEALTH_RESULT=$(node scripts/health-check.js --check 2>&1 || true)
+        echo "Health Check Result:"
+        echo "$HEALTH_RESULT"
+        
+        # Run consistency check
+        CONSISTENCY_RESULT=$(node scripts/verify-consistency.js --quick 2>&1 || true)
+        echo "Consistency Check Result:"
+        echo "$CONSISTENCY_RESULT"
+        
+        # Determine if fix was successful
+        if echo "$HEALTH_RESULT" | grep -q "Overall Status.*healthy" && \
+           echo "$CONSISTENCY_RESULT" | grep -q "Status.*CONSISTENT"; then
+          echo "FIX_STATUS=success" >> $GITHUB_ENV
+        else
+          echo "FIX_STATUS=failed" >> $GITHUB_ENV
+        fi
+    
+    - name: Create emergency report
+      if: always()
+      run: |
+        echo "📋 Creating emergency report..."
+        
+        cat > emergency-report.md << EOF
+        # Emergency Fix Report
+        
+        ## Emergency Details
+        - Type: ${{ github.event.inputs.emergency_type }}
+        - Triggered By: ${{ github.actor }}
+        - Triggered At: $(date)
+        - Run ID: ${{ github.run_id }}
+        - Force Fix: ${{ github.event.inputs.force_fix }}
+        
+        ## Actions Taken
+        EOF
+        
+        # Add actions based on emergency type
+        case "${{ github.event.inputs.emergency_type }}" in
+          data_corruption)
+            echo "- Performed data corruption recovery" >> emergency-report.md
+            echo "- Ran emergency recovery procedures" >> emergency-report.md
+            ;;
+          statistics_mismatch)
+            echo "- Fixed statistics mismatch" >> emergency-report.md
+            echo "- Recalculated all statistics" >> emergency-report.md
+            ;;
+          backup_restore)
+            echo "- Restored from latest backup" >> emergency-report.md
+            echo "- Verified backup integrity" >> emergency-report.md
+            ;;
+          full_reset)
+            echo "- Performed full system reset" >> emergency-report.md
+            echo "- Reset all data to full capacity" >> emergency-report.md
+            ;;
+          system_recovery)
+            echo "- Performed comprehensive system recovery" >> emergency-report.md
+            echo "- Synced all configurations" >> emergency-report.md
+            ;;
+        esac
+        
+        echo "" >> emergency-report.md
+        echo "## Results" >> emergency-report.md
+        echo "- Fix Status: $FIX_STATUS" >> emergency-report.md
+        echo "" >> emergency-report.md
+        echo "## Next Steps" >> emergency-report.md
+        
+        if [ "$FIX_STATUS" = "success" ]; then
+          echo "✅ Emergency fix completed successfully" >> emergency-report.md
+          echo "👁️ Monitor system for next 24 hours" >> emergency-report.md
+        else
+          echo "❌ Emergency fix failed" >> emergency-report.md
+          echo "🆘 Contact system administrator immediately" >> emergency-report.md
+          echo "📞 Emergency Contacts:" >> emergency-report.md
+          echo "   - System Admin: +628112345678" >> emergency-report.md
+          echo "   - Technical Support: +628198765432" >> emergency-report.md
+        fi
+        
+        # Save report
+        mkdir -p data/reports/emergencies
+        mv emergency-report.md data/reports/emergencies/emergency-${{ github.run_id }}.md
+    
+    - name: Commit emergency changes
+      if: github.event.inputs.force_fix == 'true' && env.FIX_STATUS == 'success'
+      run: |
+        echo "💾 Committing emergency changes..."
+        
+        # Check for changes
+        if git diff --quiet; then
+          echo "⏭️ No changes to commit"
+          exit 0
+        fi
+        
+        # Setup git
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        
+        # Commit all changes
+        git add .
+        git commit -m "🚨 Emergency fix: ${{ github.event.inputs.emergency_type }}
+        
+        - Emergency type: ${{ github.event.inputs.emergency_type }}
+        - Triggered by: ${{ github.actor }}
+        - Status: $FIX_STATUS
+        - Timestamp: $(date +'%H:%M:%S')
+        - Emergency procedure"
+        
+        # Push changes
+        git push
+        
+        echo "✅ Emergency changes committed"
+    
+    - name: Create workflow summary
+      if: always()
+      run: |
+        echo "## Emergency Fix Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "**Emergency Type:** ${{ github.event.inputs.emergency_type }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Triggered By:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Triggered At:** $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "$FIX_STATUS" = "success" ]; then
+          echo "✅ **Fix Status:** SUCCESS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The emergency fix was completed successfully. The system should now be operational." >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Fix Status:** FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**🚨 IMMEDIATE ACTION REQUIRED**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The emergency fix failed. Please contact the system administrator immediately:" >> $GITHUB_STEP_SUMMARY
+          echo "- 📞 Emergency Contact: +628112345678" >> $GITHUB_STEP_SUMMARY
+          echo "- 🆘 Technical Support: +628198765432" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Report File:** data/reports/emergencies/emergency-${{ github.run_id }}.md" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "*Emergency procedure executed by GitHub Actions*" >> $GITHUB_STEP_SUMMARY
