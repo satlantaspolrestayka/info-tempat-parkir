@@ -1,0 +1,77 @@
+{
+  "system": {
+    "name": "Sistem Informasi Parkir Ops Ketupat Progo 2026",
+    "version": "2.0.0",
+    "environment": "production",
+    "maintenance_mode": false
+  },
+  "data_management": {
+    "auto_refresh_interval": 30000, // 30 detik
+    "cache_duration": 300000, // 5 menit
+    "backup_interval": 3600000, // 1 jam
+    "max_backup_files": 30,
+    "data_retention_days": 90
+  },
+  "validation": {
+    "strict_mode": true,
+    "auto_fix": true,
+    "check_interval": 120000, // 2 menit
+    "max_retries": 3,
+    "timeout": 10000 // 10 detik
+  },
+  "security": {
+    "session_timeout": 28800000, // 8 jam
+    "max_login_attempts": 3,
+    "password_min_length": 8,
+    "enable_audit_log": true,
+    "data_encryption": false
+  },
+  "performance": {
+    "max_concurrent_users": 1000,
+    "api_rate_limit": 100,
+    "cache_enabled": true,
+    "compression_enabled": true
+  },
+  "ui_settings": {
+    "theme": "blue",
+    "language": "id",
+    "timezone": "Asia/Jakarta",
+    "date_format": "DD/MM/YYYY",
+    "time_format": "HH:mm",
+    "enable_dark_mode": false,
+    "auto_dark_mode": true
+  },
+  "integration": {
+    "google_maps": {
+      "enabled": true,
+      "api_key": "",
+      "zoom_level": 15
+    },
+    "github": {
+      "auto_sync": true,
+      "branch": "main",
+      "commit_message": "🔄 Auto-update parking data"
+    },
+    "monitoring": {
+      "enabled": true,
+      "service": "github-actions",
+      "dashboard_url": "https://github.com/{username}/{repo}/actions"
+    }
+  },
+  "features": {
+    "pwa": true,
+    "offline_mode": true,
+    "push_notifications": false,
+    "qr_code_generation": true,
+    "export_reports": true,
+    "multi_language": false,
+    "accessibility": true
+  },
+  "limits": {
+    "max_notes_length": 500,
+    "max_history_items": 50,
+    "max_pending_updates": 100,
+    "max_file_size": 5242880, // 5MB
+    "max_locations": 50
+  }
+}
