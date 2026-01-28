@@ -1,0 +1,74 @@
+{
+  "name": "ops-ketupat-progo-2026",
+  "version": "2.0.0",
+  "description": "Sistem Informasi Parkir Real-time untuk Operasi Ketupat Progo 2026 di Yogyakarta",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'Open index.html in browser'",
+    "validate": "node scripts/validate-parking.js",
+    "validate:strict": "node scripts/validate-parking.js --mode=strict",
+    "validate:fix": "node scripts/validate-parking.js --mode=fix --force",
+    "validate:report": "node scripts/validate-parking.js --mode=report-only",
+    "monitor": "node scripts/monitor-statistics.js",
+    "monitor:continuous": "node scripts/monitor-statistics.js --continuous 5",
+    "fix": "node scripts/fix-statistics.js",
+    "fix:quick": "node scripts/fix-statistics.js --quick",
+    "check": "node scripts/health-check.js",
+    "backup": "node scripts/backup-manager.js",
+    "recovery": "node scripts/emergency-recovery.js",
+    "verify": "node scripts/verify-consistency.js",
+    "notify": "node scripts/notify-utilization.js",
+    "sync": "node scripts/sync-config.js",
+    "audit": "node scripts/audit-logger.js",
+    "deploy": "node scripts/deploy-check.js",
+    "test": "node scripts/test-validator.js",
+    "test:data": "node tests/test-data-integrity.js",
+    "test:workflow": "node tests/test-workflows.js",
+    "test:emergency": "node tests/test-emergency.js",
+    "setup": "./setup-validator.sh",
+    "lint": "eslint scripts/*.js",
+    "format": "prettier --write 'scripts/**/*.js' 'config/**/*.json'"
+  },
+  "bin": {
+    "parking-validator": "./scripts/validate-parking.js",
+    "parking-monitor": "./scripts/monitor-statistics.js",
+    "parking-fix": "./scripts/fix-statistics.js"
+  },
+  "keywords": [
+    "parking",
+    "yogyakarta",
+    "satlantas",
+    "police",
+    "real-time",
+    "monitoring",
+    "transportation"
+  ],
+  "author": "Satlantas Polresta Yogyakarta",
+  "license": "MIT",
+  "dependencies": {
+    "minimist": "^1.2.8",
+    "chalk": "^4.1.2",
+    "dayjs": "^1.11.9",
+    "winston": "^3.11.0",
+    "dotenv": "^16.3.1",
+    "node-fetch": "^2.7.0",
+    "simple-git": "^3.19.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/satlantaspolrestayka/ops-ketupat-progo-2026.git"
+  },
+  "bugs": {
+    "url": "https://github.com/satlantaspolrestayka/ops-ketupat-progo-2026/issues"
+  },
+  "homepage": "https://satlantaspolrestayka.github.io/ops-ketupat-progo-2026/"
+}
