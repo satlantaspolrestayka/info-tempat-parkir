@@ -1,0 +1,193 @@
+name: Daily Backup
+
+on:
+  schedule:
+    # Run every day at midnight UTC
+    - cron: '0 0 * * *'
+  
+  workflow_dispatch:  # Manual trigger
+    inputs:
+      full_backup:
+        description: 'Create full backup (including logs and reports)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  create-daily-backup:
+    name: Create Daily Backup
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 1
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install
+        echo "✅ Dependencies installed"
+    
+    - name: Create backup
+      id: backup
+      run: |
+        echo "💾 Creating daily backup..."
+        
+        # Run backup manager
+        node scripts/backup-manager.js --git
+        
+        # Capture backup information
+        if [ -f "data/backups/latest-backup.json" ]; then
+          BACKUP_INFO=$(cat data/backups/latest-backup.json)
+          echo "backup_info=$BACKUP_INFO" >> $GITHUB_OUTPUT
+          echo "backup_created=true" >> $GITHUB_OUTPUT
+        else
+          echo "backup_created=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Create full backup if requested
+      if: github.event.inputs.full_backup == 'true'
+      run: |
+        echo "📦 Creating full backup package..."
+        
+        # Create timestamp
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        
+        # Create backup directory
+        mkdir -p backup-$TIMESTAMP
+        
+        # Copy important directories
+        cp -r data backup-$TIMESTAMP/
+        cp -r config backup-$TIMESTAMP/
+        cp -r scripts backup-$TIMESTAMP/
+        cp -r .github backup-$TIMESTAMP/
+        
+        # Copy important files
+        cp index.html backup-$TIMESTAMP/
+        cp admin-petugas.html backup-$TIMESTAMP/
+        cp Package.json backup-$TIMESTAMP/
+        cp README.md backup-$TIMESTAMP/
+        cp manifest.json backup-$TIMESTAMP/
+        
+        # Create info file
+        cat > backup-$TIMESTAMP/backup-info.txt << EOF
+        Full System Backup
+        Timestamp: $(date)
+        Repository: ${{ github.repository }}
+        Commit: ${{ github.sha }}
+        Branch: ${{ github.ref_name }}
+        
+        Contents:
+        - Data files (parking data, logs, reports)
+        - Configuration files
+        - Scripts
+        - GitHub workflows
+        - HTML interfaces
+        - Documentation
+        
+        Restore Instructions:
+        1. Extract this backup
+        2. Run: npm install
+        3. Run: node scripts/health-check.js
+        4. Run: node scripts/sync-config.js
+        EOF
+        
+        # Create archive
+        tar -czf backup-$TIMESTAMP.tar.gz backup-$TIMESTAMP/
+        
+        echo "✅ Full backup created: backup-$TIMESTAMP.tar.gz"
+        
+        # Upload as artifact
+        echo "backup_archive=backup-$TIMESTAMP.tar.gz" >> $GITHUB_OUTPUT
+    
+    - name: Upload backup artifact
+      if: github.event.inputs.full_backup == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: full-backup-${{ steps.backup.outputs.timestamp || github.run_id }}
+        path: |
+          backup-*.tar.gz
+        retention-days: 30
+    
+    - name: Cleanup old backups
+      run: |
+        echo "🧹 Cleaning up old backups..."
+        
+        # Keep only last 30 days of backups
+        find data/backups -name "backup-*" -type f -mtime +30 -delete
+        
+        # Keep only last 10 git backups in the repository
+        BACKUP_COUNT=$(find data/backups -name "backup-*" -type f | wc -l)
+        if [ $BACKUP_COUNT -gt 10 ]; then
+          echo "Removing old backups, keeping last 10..."
+          # List backups by date, remove oldest
+          find data/backups -name "backup-*" -type f -printf "%T@ %p\n" | \
+            sort -n | \
+            head -n -10 | \
+            cut -d' ' -f2- | \
+            xargs rm -f
+        fi
+        
+        echo "✅ Cleanup complete"
+    
+    - name: Commit and push backup
+      if: steps.backup.outputs.backup_created == 'true'
+      run: |
+        echo "💾 Committing backup to git..."
+        
+        # Check if there are changes
+        if git diff --quiet data/backups/; then
+          echo "⏭️ No backup changes to commit"
+          exit 0
+        fi
+        
+        # Setup git
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        
+        # Commit backup files
+        git add data/backups/
+        git commit -m "💾 Daily backup: $(date +'%Y-%m-%d')
+        
+        - Automated daily backup
+        - Timestamp: $(date +'%H:%M:%S')
+        - Generated by GitHub Actions"
+        
+        # Push changes
+        git push
+        
+        echo "✅ Backup committed and pushed"
+    
+    - name: Create summary report
+      if: always()
+      run: |
+        echo "## Daily Backup Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Run Time:** $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ steps.backup.outputs.backup_created }}" = "true" ]; then
+          echo "✅ **Backup Status:** Successfully created" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ github.event.inputs.full_backup }}" = "true" ]; then
+            echo "📦 **Full Backup:** Created and uploaded as artifact" >> $GITHUB_STEP_SUMMARY
+          fi
+        else
+          echo "❌ **Backup Status:** Failed to create backup" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Next Backup:** Tomorrow at 00:00 UTC" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "*Automated by GitHub Actions*" >> $GITHUB_STEP_SUMMARY
