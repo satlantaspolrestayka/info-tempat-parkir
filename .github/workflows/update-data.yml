@@ -1,13 +1,19 @@
+[file name]: update-data.yml
+[file content begin]
 name: Process Parking Updates (Optimized)
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Changed: 5 minutes instead of 2 to avoid rate limits
+    - cron: '*/5 * * * *'  # Every 5 minutes
   
   workflow_dispatch:
     inputs:
       force:
         description: 'Force process all pending updates'
+        required: false
+        default: 'false'
+      validate-only:
+        description: 'Only validate, do not process'
         required: false
         default: 'false'
 
@@ -16,8 +22,8 @@ permissions:
 
 jobs:
   process-updates:
+    name: Process Parking Updates
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     
     steps:
     - name: Checkout repository
@@ -25,139 +31,391 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 1
-        
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: 'npm'
-        cache-dependency-path: 'package.json'
-        
-    - name: Install dependencies
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Validate Updates First
+      id: validate-updates
       run: |
-        npm ci --only=production
-        npm list --depth=0
+        echo "🔍 Validating pending updates..."
         
-    - name: Check for pending updates
-      id: check-updates
-      run: |
-        # Create initial files if they don't exist
         if [ ! -f "data/pending-updates.json" ]; then
-          echo '[]' > data/pending-updates.json
+          echo "has_updates=false"
+          echo "update_count=0"
+          exit 0
         fi
         
-        if [ ! -f "data/parkir-data.json" ]; then
-          echo '{"locations":[],"statistics":{},"metadata":{}}' > data/parkir-data.json
-        fi
+        # Run validation script
+        VALIDATION_RESULT=$(node scripts/validate-updates.js --clean)
+        echo "$VALIDATION_RESULT"
         
-        # Count pending updates
-        PENDING_COUNT=$(node -e "
+        # Count valid updates
+        UPDATE_COUNT=$(node -e "
           const fs = require('fs');
           try {
-            const updates = JSON.parse(fs.readFileSync('data/pending-updates.json', 'utf8'));
-            const pending = updates.filter(u => 
-              !u.processed_at && u.status !== 'processed' && u.status !== 'failed'
-            );
+            const updates = JSON.parse(fs.readFileSync('data/pending-updates.json'));
+            const pending = updates.filter(u => u.status === 'pending');
             console.log(pending.length);
           } catch(e) {
             console.log(0);
           }
         ")
         
-        echo "pending_count=$PENDING_COUNT" >> $GITHUB_OUTPUT
-        if [ "$PENDING_COUNT" -gt 0 ]; then
-          echo "has_pending=true" >> $GITHUB_OUTPUT
+        echo "update_count=$UPDATE_COUNT"
+        if [ "$UPDATE_COUNT" -gt 0 ]; then
+          echo "has_updates=true"
         else
-          echo "has_pending=false" >> $GITHUB_OUTPUT
+          echo "has_updates=false"
         fi
-        
+
     - name: Skip if no updates
-      if: steps.check-updates.outputs.has_pending == 'false' && github.event.inputs.force != 'true'
+      if: steps.validate-updates.outputs.has_updates == 'false' && github.event.inputs.force != 'true'
       run: |
         echo "⏭️ No pending updates to process"
         exit 0
-        
+
     - name: Process updates
-      if: steps.check-updates.outputs.has_pending == 'true' || github.event.inputs.force == 'true'
-      id: process
-      continue-on-error: true
+      if: steps.validate-updates.outputs.has_updates == 'true' || github.event.inputs.force == 'true'
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         FORCE_PROCESS: ${{ github.event.inputs.force || 'false' }}
+        VALIDATE_ONLY: ${{ github.event.inputs.validate-only || 'false' }}
       run: |
-        echo "🚗 Processing parking data updates..."
+        # Script yang dioptimalkan
+        cat > process-optimized.js << 'EOF'
+        const fs = require('fs');
+        const path = require('path');
+        const { promisify } = require('util');
         
-        # Run the update processor
-        node scripts/process-updates.js
+        const readFile = promisify(fs.readFile);
+        const writeFile = promisify(fs.writeFile);
         
-        # Capture output using new GitHub Actions format
-        PROCESSED_COUNT=$(grep "::set-output name=processed_count::" <<< "$(node scripts/process-updates.js 2>&1)" | cut -d: -f4 || echo "0")
-        FAILED_COUNT=$(grep "::set-output name=failed_count::" <<< "$(node scripts/process-updates.js 2>&1)" | cut -d: -f4 || echo "0")
-        HAS_CHANGES=$(grep "::set-output name=has_changes::" <<< "$(node scripts/process-updates.js 2>&1)" | cut -d: -f4 || echo "false")
+        async function main() {
+          console.log('🚗 Processing parking updates...');
+          
+          const startTime = Date.now();
+          const dataPath = path.join(process.cwd(), 'data/parkir-data.json');
+          const pendingPath = path.join(process.cwd(), 'data/pending-updates.json');
+          const configPath = path.join(process.cwd(), 'config/locations-config.json');
+          
+          // Load data secara parallel
+          const [mainDataStr, pendingDataStr, configDataStr] = await Promise.all([
+            readFile(dataPath, 'utf8').catch(() => '{}'),
+            readFile(pendingPath, 'utf8').catch(() => '[]'),
+            readFile(configPath, 'utf8').catch(() => '{}')
+          ]);
+          
+          const mainData = JSON.parse(mainDataStr);
+          let pendingUpdates = JSON.parse(pendingDataStr);
+          const configData = JSON.parse(configDataStr);
+          
+          // Filter hanya yang belum diproses
+          const unprocessedUpdates = pendingUpdates.filter(u => 
+            u.status === 'pending'
+          );
+          
+          console.log(`📋 Found ${unprocessedUpdates.length} pending updates`);
+          
+          if (unprocessedUpdates.length === 0 && process.env.FORCE_PROCESS !== 'true') {
+            console.log('⏭️ No updates to process');
+            return;
+          }
+          
+          if (process.env.VALIDATE_ONLY === 'true') {
+            console.log('🔍 Validation only mode - skipping processing');
+            return;
+          }
+          
+          // Backup stats sebelum diubah
+          const oldStats = {
+            bus: mainData.statistics?.total_available_bus || 0,
+            mobil: mainData.statistics?.total_available_mobil || 0,
+            motor: mainData.statistics?.total_available_motor || 0
+          };
+          
+          // Process updates
+          const processed = [];
+          const failed = [];
+          const updatedLocations = new Set();
+          
+          // Create config location map
+          const configLocationMap = {};
+          configData.locations?.forEach(loc => {
+            configLocationMap[loc.id] = loc;
+          });
+          
+          for (const update of unprocessedUpdates) {
+            try {
+              // Validasi tambahan
+              if (!update.location_id || !update.petugas_name) {
+                throw new Error('Missing required fields');
+              }
+              
+              // Cari location
+              const location = mainData.locations?.find(l => l.id === update.location_id);
+              if (!location) {
+                throw new Error(`Location ${update.location_id} not found`);
+              }
+              
+              // Check against config
+              const configLocation = configLocationMap[update.location_id];
+              
+              // Update capacities
+              const changes = [];
+              
+              if (update.bus !== undefined) {
+                const newValue = parseInt(update.bus);
+                const maxCapacity = configLocation?.capacity?.bus?.total || location.bus.total;
+                
+                if (newValue > maxCapacity) {
+                  console.warn(`⚠️ ${location.nama}: Bus value ${newValue} exceeds capacity ${maxCapacity}, capping`);
+                  update.bus = maxCapacity;
+                }
+                
+                if (location.bus.available !== newValue) {
+                  location.bus.available = newValue;
+                  location.bus.last_update = new Date().toISOString();
+                  location.bus.updated_by = update.petugas_name;
+                  changes.push(`bus: ${newValue}`);
+                }
+              }
+              
+              if (update.mobil !== undefined) {
+                const newValue = parseInt(update.mobil);
+                const maxCapacity = configLocation?.capacity?.mobil?.total || location.mobil.total;
+                
+                if (newValue > maxCapacity) {
+                  console.warn(`⚠️ ${location.nama}: Mobil value ${newValue} exceeds capacity ${maxCapacity}, capping`);
+                  update.mobil = maxCapacity;
+                }
+                
+                if (location.mobil.available !== newValue) {
+                  location.mobil.available = newValue;
+                  location.mobil.last_update = new Date().toISOString();
+                  location.mobil.updated_by = update.petugas_name;
+                  changes.push(`mobil: ${newValue}`);
+                }
+              }
+              
+              if (update.motor !== undefined) {
+                const newValue = parseInt(update.motor);
+                const maxCapacity = configLocation?.capacity?.motor?.total || location.motor.total;
+                
+                if (newValue > maxCapacity) {
+                  console.warn(`⚠️ ${location.nama}: Motor value ${newValue} exceeds capacity ${maxCapacity}, capping`);
+                  update.motor = maxCapacity;
+                }
+                
+                if (location.motor.available !== newValue) {
+                  location.motor.available = newValue;
+                  location.motor.last_update = new Date().toISOString();
+                  location.motor.updated_by = update.petugas_name;
+                  changes.push(`motor: ${newValue}`);
+                }
+              }
+              
+              if (update.notes && update.notes.trim() !== '') {
+                location.notes = update.notes.substring(0, 500);
+                changes.push('notes updated');
+              }
+              
+              if (changes.length > 0) {
+                updatedLocations.add(location.nama);
+                update.processed_at = new Date().toISOString();
+                update.status = 'processed';
+                update.changes = changes;
+                processed.push(update);
+                console.log(`✅ Updated ${location.nama} (${changes.join(', ')})`);
+              } else {
+                console.log(`ℹ️ No changes for ${location.nama}, marking as processed`);
+                update.processed_at = new Date().toISOString();
+                update.status = 'no_changes';
+                processed.push(update);
+              }
+              
+            } catch (error) {
+              console.error(`❌ Failed: ${error.message}`);
+              update.error = error.message;
+              update.status = 'failed';
+              update.failed_at = new Date().toISOString();
+              failed.push(update);
+            }
+          }
+          
+          // Update yang sudah diproses
+          pendingUpdates = pendingUpdates.map(u => {
+            const processedUpdate = processed.find(p => 
+              p.location_id === u.location_id && 
+              p.timestamp === u.timestamp
+            );
+            return processedUpdate || u;
+          });
+          
+          // Update statistics hanya jika ada perubahan
+          if (updatedLocations.size > 0) {
+            const stats = mainData.locations.reduce((acc, loc) => {
+              acc.bus += loc.bus.available || 0;
+              acc.mobil += loc.mobil.available || 0;
+              acc.motor += loc.motor.available || 0;
+              return acc;
+            }, { bus: 0, mobil: 0, motor: 0 });
+            
+            mainData.statistics = mainData.statistics || {};
+            mainData.statistics.total_available_bus = stats.bus;
+            mainData.statistics.total_available_mobil = stats.mobil;
+            mainData.statistics.total_available_motor = stats.motor;
+            mainData.statistics.update_count_today = (mainData.statistics.update_count_today || 0) + processed.length;
+            mainData.statistics.last_processed = new Date().toISOString();
+            
+            mainData.metadata = mainData.metadata || {};
+            mainData.metadata.last_updated = new Date().toISOString();
+            mainData.metadata.updated_by = 'GitHub Actions';
+            mainData.metadata.processing_time_ms = Date.now() - startTime;
+            mainData.metadata.locations_updated = Array.from(updatedLocations);
+          }
+          
+          // Save data
+          await Promise.all([
+            writeFile(dataPath, JSON.stringify(mainData, null, 2)),
+            writeFile(pendingPath, JSON.stringify(pendingUpdates, null, 2))
+          ]);
+          
+          // Archive processed
+          if (processed.length > 0) {
+            const archiveDir = path.join(process.cwd(), 'data/updates/archive');
+            if (!fs.existsSync(archiveDir)) {
+              fs.mkdirSync(archiveDir, { recursive: true });
+            }
+            
+            const today = new Date().toISOString().split('T')[0];
+            const archiveFile = path.join(archiveDir, `updates-${today}.json`);
+            
+            let archiveData = [];
+            if (fs.existsSync(archiveFile)) {
+              archiveData = JSON.parse(await readFile(archiveFile, 'utf8'));
+            }
+            
+            archiveData.push(...processed);
+            await writeFile(archiveFile, JSON.stringify(archiveData, null, 2));
+          }
+          
+          // Output untuk step berikutnya
+          console.log('::set-output name=processed_count::' + processed.length);
+          console.log('::set-output name=failed_count::' + failed.length);
+          console.log('::set-output name=updated_locations::' + Array.from(updatedLocations).join(','));
+          console.log('::set-output name=has_changes::' + (updatedLocations.size > 0 ? 'true' : 'false'));
+          
+          console.log('\n📊 SUMMARY:');
+          console.log(`⏱️ Processing time: ${Date.now() - startTime}ms`);
+          console.log(`✅ Processed: ${processed.length}`);
+          console.log(`❌ Failed: ${failed.length}`);
+          console.log(`📍 Updated locations: ${updatedLocations.size}`);
+          console.log(`🚌 Bus available: ${mainData.statistics?.total_available_bus || 0}`);
+          console.log(`🚗 Mobil available: ${mainData.statistics?.total_available_mobil || 0}`);
+          console.log(`🏍️ Motor available: ${mainData.statistics?.total_available_motor || 0}`);
+          
+          // Return results
+          return {
+            processed: processed.length,
+            failed: failed.length,
+            updatedLocations: Array.from(updatedLocations),
+            statistics: mainData.statistics
+          };
+        }
         
-        echo "processed_count=$PROCESSED_COUNT" >> $GITHUB_OUTPUT
-        echo "failed_count=$FAILED_COUNT" >> $GITHUB_OUTPUT
-        echo "has_changes=$HAS_CHANGES" >> $GITHUB_OUTPUT
+        main().catch(console.error);
+        EOF
         
-        # Log summary
-        echo "📊 Summary:"
-        echo "  Processed: $PROCESSED_COUNT"
-        echo "  Failed: $FAILED_COUNT"
-        echo "  Has changes: $HAS_CHANGES"
+        node process-optimized.js
         
-    - name: Commit and push changes
-      if: steps.process.outputs.has_changes == 'true' && steps.process.outcome == 'success'
+    - name: Run Data Validation
+      if: success()
       run: |
-        echo "💾 Committing changes..."
+        echo "🔍 Running post-update validation..."
+        node scripts/validate-parking.js --quick
+
+    - name: Commit and push only if changes
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Cek apakah ada perubahan di file data
+        if git diff --quiet data/parkir-data.json; then
+          echo "⏭️ No changes in data, skipping commit"
+          exit 0
+        fi
         
-        # Configure git
+        # Setup git
         git config --global user.email "actions@github.com"
         git config --global user.name "GitHub Actions"
         
-        # Check if there are actual changes
-        if ! git diff --quiet data/parkir-data.json data/pending-updates.json; then
-          # Add changed files
-          git add data/parkir-data.json data/pending-updates.json
-          
-          # Create commit message
-          COMMIT_MSG="🔄 Auto-update parking data [$(date +'%H:%M:%S')]
-          
-          Processed: ${{ steps.process.outputs.processed_count || 0 }} updates
-          Failed: ${{ steps.process.outputs.failed_count || 0 }} updates
-          
-          Generated by GitHub Actions"
-          
-          git commit -m "$COMMIT_MSG"
-          
-          # Push with retry logic
-          MAX_RETRIES=3
-          for i in $(seq 1 $MAX_RETRIES); do
-            echo "Push attempt $i of $MAX_RETRIES"
-            if git push; then
-              echo "✅ Successfully pushed changes"
-              break
-            else
-              echo "🔄 Push failed, pulling latest changes..."
-              sleep 2
-              git pull --rebase
-            fi
-            
-            if [ $i -eq $MAX_RETRIES ]; then
-              echo "❌ All push attempts failed"
-              exit 1
-            fi
-          done
-        else
-          echo "⏭️ No changes to commit"
-        fi
+        # Buat commit message yang informative
+        COMMIT_MSG="🔄 Auto-update parking data
         
-    - name: Handle failure
-      if: steps.process.outcome == 'failure'
-      run: |
-        echo "❌ Update processing failed"
-        echo "Check the logs for details"
+        - Processed: $(node -e "const fs=require('fs'); const data=JSON.parse(fs.readFileSync('data/parkir-data.json')); console.log(data.statistics?.update_count_today || 0);") updates
+        - Updated at: $(date +'%H:%M')
+        - Generated by GitHub Actions"
         
-    - name: Cleanup
+        # Commit hanya file yang berubah
+        git add data/parkir-data.json data/pending-updates.json
+        
+        git commit -m "$COMMIT_MSG"
+        
+        # Push dengan retry
+        for i in {1..3}; do
+          if git push; then
+            echo "✅ Changes pushed successfully"
+            break
+          else
+            echo "🔄 Push attempt $i failed, retrying..."
+            sleep 2
+            git pull --rebase
+          fi
+        done
+
+    - name: Create Summary Report
       if: always()
       run: |
-        echo "🧹 Cleanup completed"
-        echo "Workflow status: ${{ job.status }}"
+        echo "## 📊 Parking Updates Processing Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "data/parkir-data.json" ]; then
+          SUMMARY=$(node -e "
+            const fs = require('fs');
+            try {
+              const data = JSON.parse(fs.readFileSync('data/parkir-data.json'));
+              console.log('### Processing Results');
+              console.log('');
+              console.log('| Statistic | Value |');
+              console.log('|-----------|-------|');
+              console.log('| Last Updated | ' + (data.metadata?.last_updated ? new Date(data.metadata.last_updated).toLocaleString('id-ID') : 'N/A') + ' |');
+              console.log('| Total Locations | ' + data.locations.length + ' |');
+              console.log('| Bus Available | ' + (data.statistics?.total_available_bus || 0) + ' |');
+              console.log('| Mobil Available | ' + (data.statistics?.total_available_mobil || 0) + ' |');
+              console.log('| Motor Available | ' + (data.statistics?.total_available_motor || 0) + ' |');
+              console.log('| Updates Today | ' + (data.statistics?.update_count_today || 0) + ' |');
+              
+              if (data.metadata?.locations_updated && data.metadata.locations_updated.length > 0) {
+                console.log('');
+                console.log('### 📍 Updated Locations');
+                console.log('');
+                data.metadata.locations_updated.forEach(loc => {
+                  console.log('- ' + loc);
+                });
+              }
+              
+            } catch (error) {
+              console.log('Error generating summary:', error.message);
+            }
+          ")
+          
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+        fi
+[file content end]
