@@ -1,0 +1,189 @@
+[file name]: validate-parking.yml
+[file content begin]
+name: Validate and Fix Parking Statistics
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'data/parkir-data.json'
+      - 'config/locations-config.json'
+      - 'scripts/validate-parking.js'
+      - '.github/workflows/validate-parking.yml'
+  pull_request:
+    paths:
+      - 'data/parkir-data.json'
+      - 'config/locations-config.json'
+  schedule:
+    # Run every 4 hours during operation hours (6 AM - 10 PM)
+    - cron: '0 */4 6-22 * * *'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  validate-parking-data:
+    name: Validate Parking Data
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Parking Data Validator
+        id: validate
+        env:
+          VALIDATION_MODE: "fix"
+          MAX_BACKUPS: "10"
+          NOTIFY_THRESHOLD: "90"
+          FORCE_FIX: "true"
+        run: |
+          echo "🔄 Starting parking data validation..."
+          
+          # Create logs directory
+          mkdir -p data/logs
+          
+          # Execute validation script
+          node scripts/validate-parking.js \
+            --mode="$VALIDATION_MODE" \
+            --force \
+            --max-backups="$MAX_BACKUPS" \
+            --threshold="$NOTIFY_THRESHOLD" \
+            --log-level="info"
+          
+          # Capture exit code
+          VALIDATION_EXIT_CODE=$?
+          
+          # Set output for next steps
+          if [ $VALIDATION_EXIT_CODE -eq 0 ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "status=passed" >> $GITHUB_OUTPUT
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+            echo "status=failed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Verify Config Consistency
+        if: always()
+        run: |
+          echo "🔍 Verifying config consistency..."
+          node scripts/verify-consistency.js --config-check
+
+      - name: Upload Validation Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parking-validation-report
+          path: |
+            data/validation-report-*.json
+            data/validation-summary.txt
+            data/logs/
+            data/backups/
+          retention-days: 30
+
+      - name: Create Summary Report
+        if: always()
+        run: |
+          echo "## 🚗 Parking Data Validation Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f "data/validation-report-latest.json" ]; then
+            # Extract summary from report
+            SUMMARY=$(node -e "
+              try {
+                const report = require('./data/validation-report-latest.json');
+                console.log('### 📊 Validation Results');
+                console.log('');
+                console.log('| Metric | Value |');
+                console.log('|--------|-------|');
+                console.log('| Locations | ' + report.summary.total_locations + ' |');
+                console.log('| Total Capacity | ' + report.summary.total_capacity.toLocaleString() + ' |');
+                console.log('| Available Spaces | ' + report.summary.total_available.toLocaleString() + ' |');
+                console.log('| Utilization Rate | ' + report.summary.utilization_percent + '% |');
+                console.log('| Issues Found | ' + report.summary.issues_found + ' |');
+                console.log('| Fixes Applied | ' + report.summary.fixes_applied + ' |');
+                console.log('| Config Consistency | ' + report.summary.config_consistency + ' |');
+                console.log('');
+                
+                // Add vehicle breakdown
+                console.log('### 🚘 Vehicle Breakdown');
+                console.log('');
+                console.log('| Type | Available/Capacity | Utilization | Config Status |');
+                console.log('|------|-------------------|-------------|---------------|');
+                
+                const types = ['bus', 'mobil', 'motor'];
+                types.forEach(type => {
+                  const details = report.details.by_vehicle_type[type];
+                  const config = report.details.config_comparison[type];
+                  const statusIcon = config.status === 'match' ? '✅' : '⚠️';
+                  console.log(\`| \${type.toUpperCase()} | \${details.available.toLocaleString()}/\${details.capacity.toLocaleString()} | \${details.utilization}% | \${statusIcon} \${config.status} |\`);
+                });
+                
+                // Add recommendations if any
+                if (report.recommendations && report.recommendations.length > 0) {
+                  console.log('');
+                  console.log('### 💡 Recommendations');
+                  console.log('');
+                  report.recommendations.forEach(rec => {
+                    console.log('- **' + rec.location + '**: ' + rec.recommendations.join(', '));
+                  });
+                }
+                
+              } catch (error) {
+                console.log('❌ Error parsing validation report');
+                console.log('Error:', error.message);
+              }
+            ")
+            
+            echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+            
+          else
+            echo "❌ **Validation Failed**" >> $GITHUB_STEP_SUMMARY
+            echo "Please check the logs for details." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Send Notification on High Utilization
+        if: steps.validate.outputs.success == 'true'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        run: |
+          node scripts/notify-utilization.js --threshold=90
+
+      - name: Commit Fixed Data
+        if: steps.validate.outputs.success == 'true'
+        run: |
+          # Check if there are changes to commit
+          if git diff --quiet data/parkir-data.json; then
+            echo "⏭️ No changes to commit"
+            exit 0
+          fi
+          
+          # Setup git
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          
+          # Add and commit
+          git add data/parkir-data.json
+          git commit -m "✅ Auto-fix parking data validation issues"
+          
+          # Push changes
+          git push
+
+      - name: Send Alert on Failure
+        if: steps.validate.outputs.success == 'false'
+        run: |
+          echo "🚨 Validation failed! Check logs for details."
+          # In production, you would add notification logic here
+          # e.g., send email, Slack message, etc.
+[file content end]
