@@ -1,0 +1,1526 @@
+[file name]: admin-petugas.html
+[file content begin]
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow">
+    <title>INPUT DATA PARKIR - OPS KETUPAT PROGO 2026</title>
+    
+    <style>
+        /* ====== VARIABLES ====== */
+        :root {
+            --police-blue: #1E3A8A;
+            --police-blue-dark: #1E40AF;
+            --police-blue-light: #3B82F6;
+            --police-gold: #D4AF37;
+            --police-red: #DC2626;
+            --police-white: #FFFFFF;
+            --police-gray: #374151;
+            --police-gray-light: #F3F4F6;
+            
+            --status-available: #10B981;
+            --status-warning: #F59E0B;
+            --status-full: #DC2626;
+            
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.2);
+            
+            --transition-fast: 0.15s ease-out;
+            --transition-base: 0.25s ease-out;
+        }
+        
+        /* ====== RESET & BASE ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #60A5FA 100%);
+            padding: 20px;
+            color: var(--police-gray);
+            line-height: 1.5;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        /* ====== MAIN CONTAINER ====== */
+        .main-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: var(--police-white);
+            border-radius: 20px;
+            box-shadow: var(--shadow-heavy);
+            overflow: hidden;
+            border: 3px solid var(--police-gold);
+            position: relative;
+            min-height: 500px;
+        }
+        
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--police-blue), var(--police-gold), var(--police-red));
+        }
+        
+        /* ====== LOGIN SCREEN (TAMPIL AWAL) ====== */
+        .login-screen {
+            padding: 50px 30px;
+            text-align: center;
+            display: block; /* PASTIKAN INI DITAMPILKAN */
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .login-icon {
+            font-size: 64px;
+            margin-bottom: 25px;
+            color: var(--police-blue);
+            filter: drop-shadow(0 4px 8px rgba(30, 58, 138, 0.2));
+        }
+        
+        .login-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--police-blue);
+            margin-bottom: 10px;
+        }
+        
+        .login-subtitle {
+            color: var(--police-gray);
+            margin-bottom: 40px;
+            font-size: 16px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .location-select-container {
+            background: var(--police-gray-light);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid var(--police-blue-light);
+            position: relative;
+        }
+        
+        .location-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--police-blue);
+            margin-bottom: 15px;
+            text-align: left;
+            padding-left: 5px;
+        }
+        
+        .location-select {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid var(--police-blue-light);
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--police-blue);
+            background: var(--police-white);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%231E3A8A" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 20px;
+        }
+        
+        .location-select:focus {
+            outline: none;
+            border-color: var(--police-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--police-blue), var(--police-blue-dark));
+            color: var(--police-white);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(30, 58, 138, 0.4);
+        }
+        
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+        
+        /* ====== DASHBOARD SCREEN (DISEMBUNYIKAN AWAL) ====== */
+        .dashboard-screen {
+            display: none; /* DISEMBUNYIKAN SAAT AWAL */
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Location Header */
+        .location-header {
+            background: linear-gradient(135deg, var(--police-blue), var(--police-blue-dark));
+            color: var(--police-white);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .location-info {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .location-name {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        
+        .location-address {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--police-white);
+            border: 2px solid var(--police-gold);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-base);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(220, 38, 38, 0.8);
+        }
+        
+        /* Capacity Input Section */
+        .capacity-section {
+            padding: 40px 30px;
+            background: var(--police-gray-light);
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--police-blue);
+            margin-bottom: 30px;
+        }
+        
+        .vehicle-inputs {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .vehicle-card {
+            background: var(--police-white);
+            border-radius: 16px;
+            padding: 25px;
+            border: 3px solid var(--police-gray-light);
+            box-shadow: var(--shadow-light);
+            transition: all var(--transition-base);
+        }
+        
+        .vehicle-card:hover {
+            border-color: var(--police-blue);
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-2px);
+        }
+        
+        .vehicle-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .vehicle-icon {
+            font-size: 40px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--police-gray-light), var(--police-white));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--police-gray-light);
+        }
+        
+        .vehicle-info {
+            flex: 1;
+        }
+        
+        .vehicle-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--police-blue);
+            margin-bottom: 5px;
+        }
+        
+        .vehicle-capacity {
+            font-size: 14px;
+            color: var(--police-gray);
+            font-weight: 600;
+        }
+        
+        /* Number Input */
+        .number-input-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .number-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            border: 2px solid var(--police-blue-light);
+            background: var(--police-white);
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--police-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+        
+        .number-btn:hover {
+            background: var(--police-blue);
+            color: var(--police-white);
+            border-color: var(--police-blue);
+            transform: scale(1.05);
+        }
+        
+        .number-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .number-display {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .number-value {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--police-blue);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+        
+        .number-label {
+            font-size: 14px;
+            color: var(--police-gray);
+            font-weight: 600;
+        }
+        
+        /* Slider */
+        .slider-container {
+            margin-top: 20px;
+        }
+        
+        .capacity-slider {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: var(--police-gray-light);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .capacity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--police-blue);
+            border: 3px solid var(--police-white);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .quick-btn {
+            padding: 18px 10px;
+            border: 2px solid var(--police-blue-light);
+            border-radius: 12px;
+            background: var(--police-white);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--police-blue);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .quick-btn:hover {
+            background: var(--police-blue);
+            color: var(--police-white);
+            border-color: var(--police-blue);
+            transform: translateY(-2px);
+        }
+        
+        .quick-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Notes Section */
+        .notes-section {
+            margin-bottom: 40px;
+        }
+        
+        .notes-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--police-blue);
+            margin-bottom: 15px;
+        }
+        
+        .notes-input {
+            width: 100%;
+            padding: 20px;
+            border: 2px solid var(--police-blue-light);
+            border-radius: 12px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            transition: all var(--transition-base);
+        }
+        
+        .notes-input:focus {
+            outline: none;
+            border-color: var(--police-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            padding: 20px;
+            background: var(--police-gray-light);
+            color: var(--police-gray);
+            border: 2px solid var(--police-gray);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--police-gray);
+            color: var(--police-white);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            flex: 2;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--police-blue), var(--police-blue-dark));
+            color: var(--police-white);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(30, 58, 138, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        /* Status Messages */
+        .status-container {
+            margin-bottom: 30px;
+        }
+        
+        .status-message {
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .status-success {
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: #065F46;
+            border: 2px solid #10B981;
+            display: block;
+        }
+        
+        .status-error {
+            background: linear-gradient(135deg, #FEE2E2, #FECACA);
+            color: #991B1B;
+            border: 2px solid #DC2626;
+            display: block;
+        }
+        
+        /* History Section */
+        .history-section {
+            background: var(--police-white);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 30px 30px;
+            border: 2px solid var(--police-gray-light);
+        }
+        
+        .history-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .history-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--police-blue);
+        }
+        
+        .refresh-history-btn {
+            margin-left: auto;
+            background: var(--police-blue-light);
+            color: var(--police-white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        
+        .refresh-history-btn:hover {
+            background: var(--police-blue);
+            transform: translateY(-2px);
+        }
+        
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .history-item {
+            background: var(--police-gray-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--police-blue);
+            animation: fadeInUp 0.3s ease-out backwards;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .history-time {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--police-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .history-time::before {
+            content: '🕐';
+            font-size: 12px;
+        }
+        
+        .history-data {
+            font-size: 15px;
+            color: var(--police-gray);
+            margin-bottom: 10px;
+        }
+        
+        .history-notes {
+            font-size: 14px;
+            color: #6B7280;
+            font-style: italic;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9CA3AF;
+            font-size: 16px;
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-spinner {
+            border: 4px solid var(--police-gray-light);
+            border-top: 4px solid var(--police-blue);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--police-blue);
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 15px auto;
+                border-radius: 16px;
+            }
+            
+            .login-screen,
+            .capacity-section {
+                padding: 30px 20px;
+            }
+            
+            .vehicle-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .number-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            
+            .number-value {
+                font-size: 36px;
+            }
+            
+            .logout-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 20px;
+                display: block;
+                width: 100%;
+            }
+        }
+        
+        /* UTILITY CLASSES */
+        .hidden {
+            display: none !important;
+        }
+        
+        .visible {
+            display: block !important;
+        }
+        
+        /* SCROLLBAR STYLING */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--police-gray-light);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--police-blue-light);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--police-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        <!-- LOGIN SCREEN (TAMPIL AWAL) -->
+        <div class="login-screen" id="loginScreen">
+            <div class="login-icon">🛡️</div>
+            <h2 class="login-title">SATLANTAS POLRESTA YOGYAKARTA</h2>
+            <p class="login-subtitle">OPERASI KETUPAT PROGO 2026 - SISTEM INPUT DATA PARKIR</p>
+            
+            <div class="location-select-container">
+                <label class="location-label">📍 PILIH LOKASI PARKIR ANDA</label>
+                <select class="location-select" id="locationSelect">
+                    <option value="">-- Pilih Lokasi Parkir --</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            
+            <button class="btn-login" onclick="login()">
+                🚔 MASUK SEBAGAI PETUGAS
+            </button>
+        </div>
+        
+        <!-- DASHBOARD SCREEN (DISEMBUNYIKAN AWAL) -->
+        <div class="dashboard-screen" id="dashboardScreen">
+            <!-- Location Header -->
+            <div class="location-header">
+                <button class="logout-btn" onclick="logout()">
+                    🚪 KELUAR
+                </button>
+                <div class="location-info">
+                    <h2 class="location-name" id="locationName">LOKASI PARKIR</h2>
+                    <p class="location-address" id="locationAddress">ALAMAT LOKASI</p>
+                </div>
+            </div>
+            
+            <!-- Capacity Input Section -->
+            <div class="capacity-section">
+                <div class="section-title">INPUT KAPASITAS TERSEDIA</div>
+                
+                <div class="vehicle-inputs" id="vehicleInputs">
+                    <!-- Vehicle cards will be inserted here -->
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="setQuickAction('empty')">
+                        KOSONGKAN
+                    </button>
+                    <button class="quick-btn" onclick="setQuickAction('half')">
+                        SETENGAH
+                    </button>
+                    <button class="quick-btn" onclick="setQuickAction('full')">
+                        PENUH
+                    </button>
+                </div>
+                
+                <!-- Notes Section -->
+                <div class="notes-section">
+                    <label class="notes-label">📝 CATATAN TAMBAHAN (Opsional)</label>
+                    <textarea class="notes-input" id="inputNotes" 
+                              placeholder="Contoh: Ada bus pariwisata parkir, kondisi area basah, dll."></textarea>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="resetForm()">
+                        🔄 RESET FORM
+                    </button>
+                    <button class="btn-primary" onclick="submitData()" id="submitBtn">
+                        💾 SIMPAN DATA
+                    </button>
+                </div>
+                
+                <!-- Status Messages -->
+                <div class="status-container">
+                    <div class="status-message" id="statusMessage"></div>
+                </div>
+            </div>
+            
+            <!-- History Section -->
+            <div class="history-section">
+                <div class="history-header">
+                    <h3 class="history-title">📋 RIWAYAT UPDATE</h3>
+                    <button class="refresh-history-btn" onclick="loadHistory()">
+                        🔄 REFRESH
+                    </button>
+                </div>
+                
+                <div class="history-list" id="historyList">
+                    <div class="empty-history">
+                        📝 Belum ada data update
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">Memproses...</div>
+    </div>
+    
+    <script>
+        // ====== KONFIGURASI SISTEM ======
+        const CONFIG = {
+            // Storage keys
+            STORAGE_KEYS: {
+                SESSION: 'petugas_session',
+                UPDATES: 'parkir_updates',
+                CURRENT_VALUES: 'current_values',
+                LOCATION_CONFIG: 'location_config_cache'
+            },
+            
+            // Session timeout (8 jam)
+            SESSION_TIMEOUT: 8 * 60 * 60 * 1000,
+            
+            // Config cache duration (1 jam)
+            CONFIG_CACHE_DURATION: 60 * 60 * 1000
+        };
+        
+        // ====== STATE MANAGEMENT ======
+        let currentLocation = null;
+        let currentValues = {};
+        let isSubmitting = false;
+        let systemConfig = null;
+        
+        // ====== CONFIG LOADING ======
+        async function loadSystemConfig() {
+            try {
+                // Check cache first
+                const cachedConfig = localStorage.getItem(CONFIG.STORAGE_KEYS.LOCATION_CONFIG);
+                if (cachedConfig) {
+                    const { data, timestamp } = JSON.parse(cachedConfig);
+                    if (Date.now() - timestamp < CONFIG.CONFIG_CACHE_DURATION) {
+                        console.log('📦 Using cached config');
+                        return data;
+                    }
+                }
+                
+                // Load from GitHub
+                const url = `https://raw.githubusercontent.com/satlantaspolrestayka/ops-ketupat-progo-2026/main/config/locations-config.json?t=${Date.now()}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load config: ${response.status}`);
+                }
+                
+                const configData = await response.json();
+                
+                // Cache the config
+                localStorage.setItem(CONFIG.STORAGE_KEYS.LOCATION_CONFIG, JSON.stringify({
+                    data: configData,
+                    timestamp: Date.now()
+                }));
+                
+                console.log('✅ Config loaded from GitHub');
+                return configData;
+                
+            } catch (error) {
+                console.error('❌ Error loading config:', error);
+                
+                // Try to use fallback from localStorage
+                const cachedConfig = localStorage.getItem(CONFIG.STORAGE_KEYS.LOCATION_CONFIG);
+                if (cachedConfig) {
+                    const { data } = JSON.parse(cachedConfig);
+                    console.log('⚠️ Using stale cached config');
+                    return data;
+                }
+                
+                // Ultimate fallback - minimal config
+                return {
+                    locations: [],
+                    vehicle_icons: { bus: '🚌', mobil: '🚗', motor: '🏍️' },
+                    vehicle_names: { bus: 'BUS', mobil: 'MOBIL', motor: 'MOTOR' }
+                };
+            }
+        }
+        
+        // ====== INITIALIZATION ======
+        async function initializeSystem() {
+            console.log('🚔 Initializing Police Parking System...');
+            
+            try {
+                // Load system config
+                systemConfig = await loadSystemConfig();
+                console.log('✅ System config loaded:', systemConfig.locations.length, 'locations');
+                
+                // Populate location dropdown
+                populateLocationSelect(systemConfig.locations);
+                
+                // Check existing session
+                checkSession();
+                
+                // Auto-focus on location select
+                setTimeout(() => {
+                    const select = document.getElementById('locationSelect');
+                    if (select) {
+                        select.focus();
+                    }
+                }, 100);
+                
+                console.log('✅ System initialized successfully');
+                
+            } catch (error) {
+                console.error('❌ System initialization failed:', error);
+                showStatus('Gagal memuat konfigurasi sistem. Coba refresh halaman.', 'error', 10000);
+            }
+        }
+        
+        function populateLocationSelect(locations) {
+            const select = document.getElementById('locationSelect');
+            if (!select) return;
+            
+            // Clear existing options except first
+            select.innerHTML = '<option value="">-- Pilih Lokasi Parkir --</option>';
+            
+            // Add options from config
+            locations.forEach(location => {
+                if (location.status === 'active' || location.status === 'special') {
+                    const option = document.createElement('option');
+                    option.value = location.code;
+                    option.textContent = `${location.name} (${location.address})`;
+                    select.appendChild(option);
+                }
+            });
+        }
+        
+        // ====== LOGIN FUNCTIONS ======
+        async function login() {
+            console.log('Login function called');
+            
+            const locationSelect = document.getElementById('locationSelect');
+            const selectedLocationCode = locationSelect.value;
+            
+            console.log('Selected location code:', selectedLocationCode);
+            
+            if (!selectedLocationCode) {
+                showStatus('Pilih lokasi parkir terlebih dahulu!', 'error');
+                locationSelect.focus();
+                return;
+            }
+            
+            // Find location from config
+            const location = systemConfig.locations.find(loc => loc.code === selectedLocationCode);
+            if (!location) {
+                showStatus('Lokasi tidak ditemukan dalam konfigurasi!', 'error');
+                return;
+            }
+            
+            currentLocation = location;
+            
+            // Save session
+            localStorage.setItem(CONFIG.STORAGE_KEYS.SESSION, JSON.stringify({
+                locationCode: currentLocation.code,
+                loginTime: Date.now()
+            }));
+            
+            console.log('Session saved for location:', currentLocation.name);
+            
+            // Load initial values
+            loadInitialValues();
+            
+            // Update UI
+            updateLocationInfo();
+            renderVehicleInputs();
+            loadHistory();
+            
+            // Switch screens
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').style.display = 'block';
+            
+            console.log('Switched to dashboard screen');
+            
+            // Show welcome message
+            showStatus(`Selamat datang di ${currentLocation.name}`, 'success', 3000);
+        }
+        
+        function loadInitialValues() {
+            // Set initial values to full capacity
+            currentValues = {
+                bus: currentLocation.capacity.bus.total,
+                mobil: currentLocation.capacity.mobil.total,
+                motor: currentLocation.capacity.motor.total
+            };
+            
+            console.log('Initial values loaded:', currentValues);
+        }
+        
+        function logout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                currentLocation = null;
+                currentValues = {};
+                
+                document.getElementById('loginScreen').style.display = 'block';
+                document.getElementById('dashboardScreen').style.display = 'none';
+                document.getElementById('locationSelect').value = '';
+                
+                showStatus('Anda telah keluar', 'success', 2000);
+            }
+        }
+        
+        // ====== UI UPDATE FUNCTIONS ======
+        function updateLocationInfo() {
+            document.getElementById('locationName').textContent = currentLocation.name;
+            document.getElementById('locationAddress').textContent = currentLocation.address;
+        }
+        
+        function renderVehicleInputs() {
+            const container = document.getElementById('vehicleInputs');
+            const capacities = currentLocation.capacity;
+            const vehicleTypes = currentLocation.vehicle_types;
+            
+            let html = '';
+            
+            // Render based on available vehicle types
+            vehicleTypes.forEach(type => {
+                const maxCapacity = capacities[type].total;
+                if (maxCapacity > 0) {
+                    html += createVehicleCard(type, maxCapacity);
+                }
+            });
+            
+            // Special handling for KRIDOSONO
+            if (currentLocation.code === 'KRIDOSONO') {
+                html += `
+                    <div class="vehicle-card" style="background: linear-gradient(135deg, #FFFBEB, #FEF3C7); border-color: #F59E0B;">
+                        <div class="vehicle-header">
+                            <div class="vehicle-icon" style="border-color: #F59E0B;">⚠️</div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-name" style="color: #92400E;">OPERASIONAL KHUSUS</div>
+                                <div class="vehicle-capacity" style="color: #B45309;">${currentLocation.notes}</div>
+                            </div>
+                        </div>
+                        <div style="color: #92400E; font-size: 14px; line-height: 1.6;">
+                            • ${currentLocation.special_operation.period1}: ${currentLocation.special_operation.opening_time}<br>
+                            • ${currentLocation.special_operation.period2}: ${currentLocation.special_operation.opening_time}<br>
+                            ⏰ Buka: ${currentLocation.operational_hours}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+            
+            // Update all sliders
+            updateAllSliders();
+        }
+        
+        function createVehicleCard(type, maxCapacity) {
+            const currentValue = currentValues[type] || 0;
+            const percentage = maxCapacity > 0 ? (currentValue / maxCapacity) * 100 : 0;
+            const vehicleName = systemConfig.vehicle_names[type] || type.toUpperCase();
+            const vehicleIcon = systemConfig.vehicle_icons[type] || '🚗';
+            
+            return `
+                <div class="vehicle-card">
+                    <div class="vehicle-header">
+                        <div class="vehicle-icon">${vehicleIcon}</div>
+                        <div class="vehicle-info">
+                            <div class="vehicle-name">${vehicleName}</div>
+                            <div class="vehicle-capacity">Kapasitas: ${maxCapacity} unit</div>
+                        </div>
+                    </div>
+                    
+                    <div class="number-input-container">
+                        <button class="number-btn" onclick="adjustValue('${type}', -5)">
+                            −5
+                        </button>
+                        
+                        <div class="number-display">
+                            <div class="number-value" id="${type}Value">${currentValue}</div>
+                            <div class="number-label">${currentValue} / ${maxCapacity} unit</div>
+                        </div>
+                        
+                        <button class="number-btn" onclick="adjustValue('${type}', 5)">
+                            +5
+                        </button>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <input type="range" 
+                               class="capacity-slider" 
+                               id="${type}Slider"
+                               min="0" 
+                               max="${maxCapacity}" 
+                               value="${currentValue}"
+                               oninput="updateFromSlider('${type}', this.value)"
+                               style="background: linear-gradient(90deg, #3B82F6 ${percentage}%, #F3F4F6 ${percentage}%)">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="quick-btn" onclick="setExactValue('${type}', 0)" style="flex: 1;">
+                            KOSONG
+                        </button>
+                        <button class="quick-btn" onclick="setExactValue('${type}', ${Math.floor(maxCapacity / 2)})" style="flex: 1;">
+                            SETENGAH
+                        </button>
+                        <button class="quick-btn" onclick="setExactValue('${type}', ${maxCapacity})" style="flex: 1;">
+                            PENUH
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function updateAllSliders() {
+            const vehicleTypes = currentLocation.vehicle_types;
+            
+            vehicleTypes.forEach(type => {
+                const maxCapacity = currentLocation.capacity[type].total;
+                if (maxCapacity > 0) {
+                    updateSlider(type);
+                }
+            });
+        }
+        
+        function updateSlider(type) {
+            const slider = document.getElementById(`${type}Slider`);
+            const value = currentValues[type] || 0;
+            const maxCapacity = currentLocation.capacity[type].total;
+            const percentage = maxCapacity > 0 ? (value / maxCapacity) * 100 : 0;
+            
+            if (slider) {
+                slider.value = value;
+                slider.style.background = `linear-gradient(90deg, #3B82F6 ${percentage}%, #F3F4F6 ${percentage}%)`;
+                
+                const valueElement = document.getElementById(`${type}Value`);
+                if (valueElement) {
+                    valueElement.textContent = value;
+                }
+            }
+        }
+        
+        // ====== VALUE ADJUSTMENT FUNCTIONS ======
+        function adjustValue(type, delta) {
+            const maxCapacity = currentLocation.capacity[type].total;
+            let newValue = (currentValues[type] || 0) + delta;
+            
+            // Clamp value between 0 and max capacity
+            newValue = Math.max(0, Math.min(maxCapacity, newValue));
+            
+            setExactValue(type, newValue);
+        }
+        
+        function setExactValue(type, value) {
+            const maxCapacity = currentLocation.capacity[type].total;
+            value = Math.max(0, Math.min(maxCapacity, parseInt(value) || 0));
+            
+            currentValues[type] = value;
+            updateSlider(type);
+        }
+        
+        function updateFromSlider(type, value) {
+            setExactValue(type, value);
+        }
+        
+        function setQuickAction(action) {
+            const vehicleTypes = currentLocation.vehicle_types;
+            
+            switch(action) {
+                case 'empty':
+                    vehicleTypes.forEach(type => {
+                        const maxCapacity = currentLocation.capacity[type].total;
+                        if (maxCapacity > 0) setExactValue(type, 0);
+                    });
+                    showStatus('Semua kapasitas dikosongkan', 'success', 2000);
+                    break;
+                    
+                case 'half':
+                    vehicleTypes.forEach(type => {
+                        const maxCapacity = currentLocation.capacity[type].total;
+                        if (maxCapacity > 0) setExactValue(type, Math.floor(maxCapacity / 2));
+                    });
+                    showStatus('Kapasitas diset ke setengah', 'success', 2000);
+                    break;
+                    
+                case 'full':
+                    vehicleTypes.forEach(type => {
+                        const maxCapacity = currentLocation.capacity[type].total;
+                        if (maxCapacity > 0) setExactValue(type, maxCapacity);
+                    });
+                    showStatus('Semua kapasitas diisi penuh', 'success', 2000);
+                    break;
+            }
+        }
+        
+        function resetForm() {
+            if (confirm('Reset semua input ke nilai awal?')) {
+                loadInitialValues();
+                renderVehicleInputs();
+                showStatus('Form berhasil direset', 'success', 2000);
+            }
+        }
+        
+        // ====== DATA SUBMISSION ======
+        async function submitData() {
+            if (isSubmitting) return;
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const notes = document.getElementById('inputNotes').value.trim();
+            
+            // Validation
+            const vehicleTypes = currentLocation.vehicle_types;
+            let isValid = true;
+            
+            vehicleTypes.forEach(type => {
+                const maxCapacity = currentLocation.capacity[type].total;
+                const currentValue = currentValues[type] || 0;
+                
+                if (maxCapacity > 0 && (currentValue < 0 || currentValue > maxCapacity)) {
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                showStatus('Ada nilai yang tidak valid! Periksa kembali.', 'error');
+                return;
+            }
+            
+            // Start submission
+            isSubmitting = true;
+            submitBtn.classList.add('loading');
+            showLoading('Menyimpan data...');
+            
+            try {
+                // Create update object
+                const updateData = {
+                    location_id: currentLocation.id,
+                    location_code: currentLocation.code,
+                    location_name: currentLocation.name,
+                    petugas_name: `Petugas_${currentLocation.code}`,
+                    timestamp: new Date().toISOString(),
+                    status: 'pending'
+                };
+                
+                // Add vehicle data
+                vehicleTypes.forEach(type => {
+                    if (currentLocation.capacity[type].total > 0) {
+                        updateData[type] = currentValues[type];
+                    }
+                });
+                
+                if (notes) {
+                    updateData.notes = notes;
+                }
+                
+                console.log('Submitting data:', updateData);
+                
+                // For now, save to local storage
+                // In production, this should send to a backend API
+                saveToPendingUpdates(updateData);
+                
+                // Simulate delay for API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Success
+                hideLoading();
+                submitBtn.classList.remove('loading');
+                isSubmitting = false;
+                
+                showStatus(
+                    `✅ DATA BERHASIL DISIMPAN!<br>${new Date().toLocaleTimeString('id-ID', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    })}`,
+                    'success'
+                );
+                
+                // Clear notes
+                document.getElementById('inputNotes').value = '';
+                
+                // Refresh history
+                loadHistory();
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                hideLoading();
+                submitBtn.classList.remove('loading');
+                isSubmitting = false;
+                
+                showStatus('❌ Gagal menyimpan data. Coba lagi.', 'error');
+            }
+        }
+        
+        function saveToPendingUpdates(updateData) {
+            try {
+                let updates = [];
+                const stored = localStorage.getItem(CONFIG.STORAGE_KEYS.UPDATES);
+                
+                if (stored) {
+                    updates = JSON.parse(stored);
+                }
+                
+                // Add new update
+                updates.push(updateData);
+                
+                // Keep only last 50 entries
+                updates = updates.slice(-50);
+                
+                localStorage.setItem(CONFIG.STORAGE_KEYS.UPDATES, JSON.stringify(updates));
+                
+            } catch (error) {
+                console.error('Error saving to pending updates:', error);
+            }
+        }
+        
+        // ====== HISTORY MANAGEMENT ======
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            
+            try {
+                const stored = localStorage.getItem(CONFIG.STORAGE_KEYS.UPDATES);
+                let updates = stored ? JSON.parse(stored) : [];
+                
+                // Filter for current location
+                const locationUpdates = updates.filter(item => 
+                    item.location_code === currentLocation.code
+                ).slice(-10).reverse(); // Show only 10 most recent
+                
+                if (locationUpdates.length === 0) {
+                    historyList.innerHTML = `
+                        <div class="empty-history">
+                            📝 Belum ada data update untuk lokasi ini
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                locationUpdates.forEach(item => {
+                    const time = new Date(item.timestamp).toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    
+                    const date = new Date(item.timestamp).toLocaleDateString('id-ID', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short'
+                    });
+                    
+                    let vehicleData = '';
+                    if (item.bus !== undefined) vehicleData += `🚌 ${item.bus} `;
+                    if (item.mobil !== undefined) vehicleData += `🚗 ${item.mobil} `;
+                    if (item.motor !== undefined) vehicleData += `🏍️ ${item.motor} `;
+                    
+                    html += `
+                        <div class="history-item">
+                            <div class="history-time">
+                                <span>${time}</span>
+                                <span style="margin-left: auto; font-size: 12px; opacity: 0.8;">${date}</span>
+                            </div>
+                            <div class="history-data">
+                                ${vehicleData}
+                            </div>
+                            ${item.notes ? `
+                                <div class="history-notes">
+                                    📝 ${item.notes}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                historyList.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading history:', error);
+                historyList.innerHTML = `
+                    <div class="empty-history" style="color: #DC2626;">
+                        ⚠️ Error loading history
+                    </div>
+                `;
+            }
+        }
+        
+        // ====== SESSION MANAGEMENT ======
+        function checkSession() {
+            try {
+                const session = localStorage.getItem(CONFIG.STORAGE_KEYS.SESSION);
+                if (session) {
+                    const sessionData = JSON.parse(session);
+                    const sessionAge = Date.now() - sessionData.loginTime;
+                    
+                    if (sessionAge < CONFIG.SESSION_TIMEOUT) {
+                        const locationCode = sessionData.locationCode;
+                        const location = systemConfig.locations.find(loc => loc.code === locationCode);
+                        
+                        if (location) {
+                            currentLocation = location;
+                            
+                            // Load values
+                            loadInitialValues();
+                            
+                            // Switch to dashboard
+                            document.getElementById('loginScreen').style.display = 'none';
+                            document.getElementById('dashboardScreen').style.display = 'block';
+                            
+                            // Update UI
+                            updateLocationInfo();
+                            renderVehicleInputs();
+                            loadHistory();
+                            
+                            showStatus(`Selamat datang kembali di ${currentLocation.name}`, 'success', 3000);
+                            return;
+                        }
+                    } else {
+                        localStorage.removeItem(CONFIG.STORAGE_KEYS.SESSION);
+                    }
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+            }
+        }
+        
+        // ====== STATUS & LOADING FUNCTIONS ======
+        function showStatus(message, type, duration = 5000) {
+            const statusEl = document.getElementById('statusMessage');
+            
+            if (statusEl) {
+                statusEl.innerHTML = message;
+                statusEl.className = `status-message status-${type}`;
+                statusEl.style.display = 'block';
+                
+                if (duration > 0) {
+                    setTimeout(() => {
+                        statusEl.style.display = 'none';
+                    }, duration);
+                }
+            }
+        }
+        
+        function showLoading(message) {
+            const overlay = document.getElementById('loadingOverlay');
+            const text = document.getElementById('loadingText');
+            
+            if (overlay && text) {
+                text.textContent = message;
+                overlay.classList.add('active');
+            }
+        }
+        
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+        }
+        
+        // ====== INITIALIZATION ======
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSystem();
+        });
+    </script>
+</body>
+</html>
+[file content end]
