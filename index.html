@@ -1,0 +1,2017 @@
+[file name]: index.html
+[file content begin]
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Sistem Informasi Parkir - Operasi Ketupat Progo 2026</title>
+    
+    <!-- SEO & Meta Tags -->
+    <meta name="description" content="Sistem Informasi Parkir Real-time untuk Operasi Ketupat Progo 2026 di Yogyakarta">
+    <meta name="keywords" content="parkir, yogyakarta, operasi ketupat progo, satlantas, polresta">
+    <meta name="author" content="Satlantas Polresta Yogyakarta">
+    
+    <!-- iOS Meta Tags -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-title" content="Info Parkir">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e40af">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🅿️</text></svg>">
+    
+    <style>
+        /* ====== CSS VARIABLES & RESET ====== */
+        :root {
+            /* Color System - Professional Blue Theme */
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1e40af;
+            --primary-800: #1e3a8a;
+            --primary-900: #1e3a8a;
+            
+            --secondary-500: #64748b;
+            --secondary-600: #475569;
+            --secondary-700: #334155;
+            
+            --success-500: #10b981;
+            --success-600: #059669;
+            --success-700: #047857;
+            
+            --warning-500: #f59e0b;
+            --warning-600: #d97706;
+            
+            --danger-500: #ef4444;
+            --danger-600: #dc2626;
+            
+            /* Neutral Colors */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            /* Shadow System */
+            --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-card: 0 10px 15px rgba(0, 0, 0, 0.1);
+            
+            /* Animation */
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.25s ease;
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body { 
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 16px;
+            color: var(--gray-800);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        
+        /* ====== HEADER UTAMA ====== */
+        .main-header { 
+            background: linear-gradient(135deg, var(--primary-800), var(--primary-700)); 
+            color: white; 
+            text-align: center;
+            padding: 32px 20px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .main-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="none"/><path d="M30 5L55 25V55H5V25L30 5Z" stroke="rgba(255,255,255,0.03)" stroke-width="1" fill="none"/></svg>');
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main-header h1 { 
+            font-size: clamp(24px, 5vw, 32px); 
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .main-header p { 
+            color: rgba(255, 255, 255, 0.9); 
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: 400;
+            margin-bottom: 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .operation-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.5px;
+            margin-top: 16px;
+        }
+        
+        /* ====== LOADING OVERLAY ====== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+            transition: opacity 0.3s;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(30, 64, 175, 0.1);
+            border-top: 3px solid var(--primary-700);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        
+        .loading-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .loading-subtext {
+            font-size: 13px;
+            color: var(--gray-500);
+            text-align: center;
+            max-width: 280px;
+            line-height: 1.5;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ====== REFRESH NOTIFICATION ====== */
+        .refresh-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-600);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9998;
+            box-shadow: var(--shadow-medium);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+            border-left: 3px solid white;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .refresh-notification.error {
+            background: var(--danger-500);
+        }
+        
+        /* ====== CONTAINER ====== */
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* ====== ACTIONS SECTION ====== */
+        .actions-section {
+            padding: 32px 20px 24px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .action-wrapper {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .btn-primary { 
+            width: 100%;
+            max-width: 400px;
+            padding: 18px 24px; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 12px; 
+            transition: all var(--transition-base);
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+            color: white;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+        }
+        
+        .btn-primary:active { 
+            transform: translateY(0); 
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        /* ====== UPDATE INFO SECTION ====== */
+        .update-info-section {
+            padding: 0 20px 32px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .update-wrapper {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .last-updated {
+            font-size: 14px;
+            color: var(--gray-600);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .last-updated::before {
+            content: '🔄';
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        /* ====== STATISTICS SECTION ====== */
+        .statistics-section {
+            padding: 32px 20px;
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .stat-card {
+            background: var(--gray-50);
+            border-radius: 10px;
+            padding: 24px 20px;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-base);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--primary-300);
+        }
+        
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+            opacity: 0.9;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary-700);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray-600);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* ====== MAIN CONTENT ====== */
+        .main-content {
+            padding: 0 20px 40px;
+            background: white;
+        }
+        
+        .section-title {
+            font-size: clamp(20px, 4vw, 24px);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0 0 24px 0;
+            padding: 32px 0 20px;
+            border-bottom: 2px solid var(--primary-200);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 80px;
+            height: 2px;
+            background: var(--primary-600);
+        }
+        
+        /* ====== LOKASI LIST ====== */
+        .lokasi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .lokasi-item { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 24px; 
+            transition: all var(--transition-base);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lokasi-item:hover {
+            box-shadow: var(--shadow-medium);
+            border-color: var(--gray-300);
+        }
+        
+        .lokasi-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-500), var(--primary-700));
+        }
+        
+        /* STYLE KHUSUS KRIDOSONO */
+        .lokasi-item.kridosono {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border: 1px solid #fbbf24;
+            position: relative;
+        }
+        
+        .kridosono-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .kridosono-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        /* TOMBOL INFO OPERASIONAL */
+        .info-operasional-toggle {
+            width: 100%;
+            padding: 14px 20px;
+            background: #fef9c3;
+            border: 1px solid #fbbf24;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            margin: 20px 0;
+        }
+        
+        .info-operasional-toggle:hover {
+            background: #fef08a;
+            border-color: #f59e0b;
+        }
+        
+        .toggle-icon {
+            font-size: 16px;
+            transition: transform 0.3s ease-out;
+        }
+        
+        .info-operasional-content {
+            max-height: 0;
+            overflow: hidden;
+            background: white;
+            border-radius: 0 0 6px 6px;
+            border: 1px solid #fbbf24;
+            border-top: none;
+            transition: max-height 0.4s ease-out;
+            margin: -1px 0 20px 0;
+        }
+        
+        .info-operasional-content.expanded {
+            max-height: 400px;
+        }
+        
+        .operasional-simple {
+            padding: 20px;
+        }
+        
+        /* STYLE PERIODE SEDERHANA */
+        .periode-simple {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #fbbf24;
+        }
+        
+        .periode-simple:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .periode-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .periode-waktu {
+            font-size: 14px;
+            color: #b45309;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .periode-kapasitas {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        /* BADGE KAPASITAS SEDERHANA */
+        .simple-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        
+        .simple-badge.mobil {
+            background: #eff6ff;
+            color: var(--primary-700);
+            border-color: #93c5fd;
+        }
+        
+        .simple-badge.motor {
+            background: #f0fdf4;
+            color: var(--success-600);
+            border-color: #86efac;
+        }
+        
+        .lokasi-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 16px; 
+        }
+        
+        .lokasi-nama { 
+            font-size: clamp(18px, 4vw, 20px); 
+            font-weight: 700; 
+            color: var(--gray-900); 
+            line-height: 1.3;
+            flex: 1;
+        }
+        
+        .lokasi-id { 
+            background: var(--primary-600); 
+            color: white; 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 4px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-left: 12px;
+        }
+        
+        .lokasi-alamat { 
+            color: var(--gray-600); 
+            margin-bottom: 20px; 
+            font-size: 15px;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .lokasi-alamat::before {
+            content: '📍';
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            opacity: 0.7;
+        }
+        
+        .lokasi-jarak {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            color: var(--primary-600);
+            font-weight: 600;
+            padding: 12px 16px;
+            background: var(--gray-50);
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .lokasi-jarak::before {
+            content: '📍';
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .lokasi-jarak-loading {
+            color: var(--gray-400);
+            background: linear-gradient(90deg, var(--gray-50), var(--gray-100), var(--gray-50));
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .kapasitas-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .kapasitas-item {
+            flex: 1;
+            min-width: 150px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-base);
+        }
+        
+        .kapasitas-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .kapasitas-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .kapasitas-icon {
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .kapasitas-icon.bus { background: #fef2f2; color: var(--danger-600); }
+        .kapasitas-icon.mobil { background: #eff6ff; color: var(--primary-600); }
+        .kapasitas-icon.motor { background: #f0fdf4; color: var(--success-600); }
+        
+        .kapasitas-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        .kapasitas-progress {
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease-out;
+        }
+        
+        .progress-fill.bus { background: linear-gradient(90deg, #fca5a5, #ef4444); }
+        .progress-fill.mobil { background: linear-gradient(90deg, #93c5fd, #3b82f6); }
+        .progress-fill.motor { background: linear-gradient(90deg, #86efac, #10b981); }
+        
+        .kapasitas-numbers {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .kapasitas-available {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+        
+        .kapasitas-percentage {
+            font-size: 14px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        .kapasitas-percentage.high { background: #dcfce7; color: #166534; }
+        .kapasitas-percentage.medium { background: #fef9c3; color: #92400e; }
+        .kapasitas-percentage.low { background: #fee2e2; color: #991b1b; }
+        
+        .lokasi-actions { 
+            display: flex; 
+            gap: 12px; 
+        }
+        
+        .btn-action { 
+            flex: 1; 
+            padding: 14px 16px; 
+            border: 1px solid transparent; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            font-weight: 600;
+            min-height: 48px;
+            transition: all var(--transition-base);
+            background: white;
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .btn-action:active {
+            transform: translateY(0);
+        }
+        
+        .btn-map { 
+            background: white;
+            color: var(--primary-600); 
+            border-color: #93c5fd;
+        }
+        
+        .btn-route { 
+            background: white;
+            color: var(--success-600);
+            border-color: #a7f3d0;
+        }
+        
+        /* STATUS INDICATOR */
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-low { background-color: #10b981; } /* Banyak tersedia */
+        .status-medium { background-color: #f59e0b; } /* Sedang */
+        .status-high { background-color: #ef4444; } /* Hampir penuh */
+        .status-full { background-color: #dc2626; } /* Penuh */
+        
+        /* ====== RESPONSIVE DESIGN ====== */
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+            
+            .main-header {
+                padding: 24px 16px;
+            }
+            
+            .actions-section,
+            .update-info-section,
+            .statistics-section,
+            .main-content {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            .statistics-section {
+                padding: 24px 16px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .stat-card {
+                padding: 20px 16px;
+            }
+            
+            .lokasi-list {
+                gap: 16px;
+            }
+            
+            .lokasi-item {
+                padding: 20px;
+            }
+            
+            .kapasitas-item {
+                min-width: 100%;
+            }
+            
+            .lokasi-actions {
+                flex-direction: column;
+            }
+            
+            .btn-action {
+                width: 100%;
+            }
+        }
+        
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .lokasi-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (min-width: 1025px) {
+            .actions-section,
+            .update-info-section,
+            .statistics-section,
+            .main-content {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+            
+            .section-title {
+                font-size: 26px;
+            }
+            
+            .lokasi-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+                gap: 24px;
+            }
+            
+            .kapasitas-container {
+                flex-wrap: nowrap;
+            }
+        }
+        
+        @media (orientation: landscape) and (max-height: 600px) {
+            .main-header {
+                padding: 20px;
+            }
+            
+            .actions-section {
+                padding: 20px;
+            }
+            
+            .statistics-section {
+                padding: 20px;
+            }
+            
+            .stat-card {
+                padding: 16px;
+            }
+        }
+        
+        /* ====== FOOTER ====== */
+        .footer { 
+            text-align: center; 
+            padding: 32px 20px; 
+            color: white; 
+            font-size: 14px; 
+            background: linear-gradient(135deg, var(--primary-800), var(--primary-700));
+            line-height: 1.6;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="none"/><path d="M30 5L55 25V55H5V25L30 5Z" stroke="rgba(255,255,255,0.03)" stroke-width="1" fill="none"/></svg>');
+        }
+        
+        .footer-logo {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer p {
+            margin: 8px 0;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer-copyright {
+            margin-top: 20px;
+            font-size: 13px;
+            opacity: 0.7;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ====== PWA INSTALL BUTTON ====== */
+        .pwa-install {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 9997;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .pwa-install p {
+            flex: 1;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .pwa-install button {
+            background: var(--primary-600);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .pwa-install .close-btn {
+            background: var(--gray-200);
+            color: var(--gray-700);
+            padding: 6px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        /* ====== UTILITY CLASSES ====== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-2 { margin-top: 8px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mt-4 { margin-top: 16px; }
+        .mb-4 { margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Mendeteksi lokasi Anda...</div>
+        <div class="loading-subtext">Memungkinkan akses lokasi untuk pengalaman terbaik</div>
+    </div>
+
+    <!-- REFRESH NOTIFICATION -->
+    <div class="refresh-notification" id="refreshNotification">
+        <span>Data diperbarui</span>
+        <span id="refreshTime"></span>
+    </div>
+
+    <!-- PWA INSTALL PROMPT -->
+    <div class="pwa-install" id="pwaInstall">
+        <p>Pasang aplikasi parkir di HP Anda</p>
+        <button onclick="installPWA()">PASANG</button>
+        <button class="close-btn" onclick="closePWAInstall()">✕</button>
+    </div>
+
+    <div class="container">
+        <!-- HEADER UTAMA -->
+        <div class="main-header">
+            <div class="header-content">
+                <h1>SISTEM INFORMASI PARKIR</h1>
+                <p>Operasi Ketupat Progo 2026 - Kota Yogyakarta</p>
+                <div class="operation-badge">Satlantas Polresta Yogyakarta</div>
+            </div>
+        </div>
+        
+        <!-- ACTIONS SECTION -->
+        <div class="actions-section">
+            <div class="action-wrapper">
+                <button class="btn btn-primary" onclick="cariParkirTerdekat()" id="btnCari">
+                    CARI PARKIR TERDEKAT
+                </button>
+            </div>
+        </div>
+        
+        <!-- UPDATE INFO SECTION -->
+        <div class="update-info-section">
+            <div class="update-wrapper">
+                <div class="last-updated" id="lastUpdated">
+                    Memuat data...
+                </div>
+            </div>
+        </div>
+        
+        <!-- STATISTICS SECTION -->
+        <div class="statistics-section">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon">🚗</div>
+                    <div class="stat-number" id="totalMobil">0</div>
+                    <div class="stat-label">Kapasitas Mobil</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🏍️</div>
+                    <div class="stat-number" id="totalMotor">0</div>
+                    <div class="stat-label">Kapasitas Motor</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🚌</div>
+                    <div class="stat-number" id="totalBus">0</div>
+                    <div class="stat-label">Kapasitas Bus</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="section-title">
+                DAFTAR LOKASI PARKIR
+            </div>
+            
+            <div class="lokasi-list" id="lokasiList">
+                <!-- Data akan dimuat di sini -->
+            </div>
+        </div>
+        
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="footer-logo">Satlantas Polresta Yogyakarta</div>
+            <p>Polri Untuk Masyarakat</p>
+            <p class="footer-copyright">© 2026 - Operasi Ketupat Progo</p>
+            <p class="footer-copyright">Scan QR Code untuk informasi parkir real-time</p>
+        </div>
+    </div>
+
+    <script>
+        // ====== KONFIGURASI SISTEM ======
+        const CONFIG = {
+            // GitHub Repository Configuration
+            REPO_OWNER: 'satlantaspolrestayka',
+            REPO_NAME: 'ops-ketupat-progo-2026',
+            CONFIG_FILE: 'config/locations-config.json',
+            DATA_FILE: 'data/parkir-data.json',
+            
+            // Auto-refresh settings
+            AUTO_REFRESH_INTERVAL: 30000, // 30 detik
+            
+            // Cache settings
+            CACHE_DURATION: 5 * 60 * 1000, // 5 menit
+            CACHE_KEY: 'parkir_cache_v4',
+            CONFIG_CACHE_KEY: 'locations_config_cache',
+            CACHE_TIMESTAMP_KEY: 'parkir_cache_timestamp'
+        };
+        
+        // ====== STATE MANAGEMENT ======
+        let dataParkir = [];
+        let locationsConfig = null;
+        let userPosition = null;
+        const distancesCache = new Map();
+        let isCalculating = false;
+        let isRefreshing = false;
+        let refreshInterval = null;
+        let deferredInstallPrompt = null;
+        
+        // ====== FUNGSI UTAMA ======
+        function hitungJarak(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function formatJarak(km) {
+            if (km < 1) {
+                return `${Math.round(km * 1000)} meter`;
+            } else {
+                return `${km.toFixed(1)} km`;
+            }
+        }
+
+        function getLocation() {
+            return new Promise((resolve, reject) => {
+                if (userPosition) {
+                    resolve(userPosition);
+                    return;
+                }
+                
+                if (isCalculating) {
+                    reject(new Error('Sedang menghitung lokasi...'));
+                    return;
+                }
+                
+                if (!navigator.geolocation) {
+                    reject(new Error('Browser tidak mendukung GPS'));
+                    return;
+                }
+                
+                showLoading('Mendeteksi lokasi Anda...');
+                
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        userPosition = {
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            accuracy: pos.coords.accuracy,
+                            timestamp: pos.timestamp
+                        };
+                        hideLoading();
+                        resolve(userPosition);
+                    },
+                    (err) => {
+                        hideLoading();
+                        reject(err);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        }
+
+        async function hitungSemuaJarak() {
+            if (!userPosition || dataParkir.length === 0) return;
+            
+            showLoading('Menghitung jarak ke lokasi parkir...');
+            
+            distancesCache.clear();
+            
+            for (const lokasi of dataParkir) {
+                try {
+                    const [lokasiLat, lokasiLng] = lokasi.koordinat.split(',').map(Number);
+                    const jarak = hitungJarak(
+                        userPosition.lat,
+                        userPosition.lng,
+                        lokasiLat,
+                        lokasiLng
+                    );
+                    distancesCache.set(lokasi.id, jarak);
+                    
+                    // Update display secara bertahap
+                    setTimeout(() => {
+                        updateJarakDisplay(lokasi.id, jarak);
+                    }, Math.random() * 100);
+                    
+                } catch (error) {
+                    console.error(`Error menghitung jarak untuk ${lokasi.nama}:`, error);
+                    distancesCache.set(lokasi.id, Infinity);
+                }
+            }
+            
+            // Tunggu semua perhitungan selesai
+            await new Promise(resolve => setTimeout(resolve, 500));
+            hideLoading();
+        }
+
+        function showLoading(message) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                const text = overlay.querySelector('.loading-text');
+                if (text && message) {
+                    text.textContent = message;
+                }
+                overlay.classList.add('active');
+            }
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function showRefreshNotification(success = true, message = null) {
+            const notification = document.getElementById('refreshNotification');
+            const timeEl = document.getElementById('refreshTime');
+            
+            if (notification && timeEl) {
+                notification.className = `refresh-notification ${success ? '' : 'error'}`;
+                timeEl.textContent = message || new Date().toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                notification.style.display = 'flex';
+                
+                // Auto hide setelah 3 detik
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // ====== CONFIG LOADING ======
+        async function loadLocationsConfig() {
+            try {
+                // Check cache first
+                const cachedConfig = localStorage.getItem(CONFIG.CONFIG_CACHE_KEY);
+                if (cachedConfig) {
+                    const { data, timestamp } = JSON.parse(cachedConfig);
+                    if (Date.now() - timestamp < CONFIG.CACHE_DURATION) {
+                        console.log('📦 Using cached locations config');
+                        return data;
+                    }
+                }
+                
+                // Load from GitHub
+                const url = `https://raw.githubusercontent.com/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/main/${CONFIG.CONFIG_FILE}?t=${Date.now()}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load config: ${response.status}`);
+                }
+                
+                const configData = await response.json();
+                
+                // Cache the config
+                localStorage.setItem(CONFIG.CONFIG_CACHE_KEY, JSON.stringify({
+                    data: configData,
+                    timestamp: Date.now()
+                }));
+                
+                console.log('✅ Locations config loaded from GitHub');
+                return configData;
+                
+            } catch (error) {
+                console.error('❌ Error loading locations config:', error);
+                return null;
+            }
+        }
+
+        // ====== DATA MANAGEMENT ======
+        async function loadDataFromGitHub(forceRefresh = false) {
+            const cacheKey = CONFIG.CACHE_KEY;
+            const timestampKey = CONFIG.CACHE_TIMESTAMP_KEY;
+            
+            // Cek cache jika tidak force refresh
+            if (!forceRefresh) {
+                try {
+                    const cachedData = localStorage.getItem(cacheKey);
+                    const cachedTimestamp = localStorage.getItem(timestampKey);
+                    
+                    if (cachedData && cachedTimestamp) {
+                        const cacheAge = Date.now() - parseInt(cachedTimestamp);
+                        
+                        if (cacheAge < CONFIG.CACHE_DURATION) {
+                            console.log('📦 Menggunakan data cache (', Math.floor(cacheAge/1000), 'detik )');
+                            const data = JSON.parse(cachedData);
+                            processLoadedData(data);
+                            return data;
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Cache error:', error);
+                }
+            }
+            
+            // Load dari GitHub
+            try {
+                if (isRefreshing) return;
+                isRefreshing = true;
+                
+                const url = `https://raw.githubusercontent.com/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/main/${CONFIG.DATA_FILE}?t=${Date.now()}`;
+                console.log('🌐 Fetching data from:', url);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Validasi data
+                if (!data.locations || !Array.isArray(data.locations)) {
+                    throw new Error('Format data tidak valid');
+                }
+                
+                // Simpan ke cache
+                localStorage.setItem(cacheKey, JSON.stringify(data));
+                localStorage.setItem(timestampKey, Date.now().toString());
+                
+                // Process dan update UI
+                processLoadedData(data);
+                
+                // Show success notification
+                showRefreshNotification(true, `Data diperbarui`);
+                
+                console.log('✅ Data loaded successfully');
+                return data;
+                
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                
+                // Fallback ke cache jika ada
+                try {
+                    const cachedData = localStorage.getItem(cacheKey);
+                    if (cachedData) {
+                        console.log('🔄 Fallback to cached data');
+                        const data = JSON.parse(cachedData);
+                        processLoadedData(data);
+                        showRefreshNotification(false, 'Gagal update, menggunakan cache');
+                    } else {
+                        showRefreshNotification(false, 'Gagal memuat data');
+                    }
+                } catch (cacheError) {
+                    showRefreshNotification(false, 'Gagal memuat data');
+                }
+                
+                throw error;
+                
+            } finally {
+                isRefreshing = false;
+            }
+        }
+
+        function processLoadedData(data) {
+            // Update dataParkir
+            dataParkir = data.locations || [];
+            
+            // Update statistics
+            updateStatistics(data);
+            
+            // Render lokasi
+            renderLokasi();
+            
+            // Update last updated time
+            updateLastUpdated(data.metadata?.last_updated);
+            
+            // Hitung jarak jika user position ada
+            if (userPosition) {
+                hitungSemuaJarak();
+            }
+        }
+
+        function updateStatistics(data) {
+            if (!data.statistics) return;
+            
+            // Update counters
+            const busEl = document.getElementById('totalBus');
+            const mobilEl = document.getElementById('totalMobil');
+            const motorEl = document.getElementById('totalMotor');
+            
+            if (busEl) busEl.textContent = formatNumber(data.statistics.total_bus_capacity || 0);
+            if (mobilEl) mobilEl.textContent = formatNumber(data.statistics.total_mobil_capacity || 0);
+            if (motorEl) motorEl.textContent = formatNumber(data.statistics.total_motor_capacity || 0);
+        }
+
+        function formatNumber(num) {
+            return parseInt(num).toLocaleString('id-ID');
+        }
+
+        function updateLastUpdated(timestamp) {
+            const el = document.getElementById('lastUpdated');
+            if (!el) return;
+            
+            if (!timestamp || timestamp === 'Cache') {
+                el.textContent = 'Data: Cache lokal';
+                el.style.color = '#f59e0b';
+                return;
+            }
+            
+            try {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                
+                let timeText;
+                let color = '#10b981';
+                
+                if (diffMinutes < 1) {
+                    timeText = 'Baru saja';
+                } else if (diffMinutes < 60) {
+                    timeText = `${diffMinutes} menit yang lalu`;
+                    if (diffMinutes > 5) color = '#f59e0b';
+                } else if (diffMinutes < 1440) {
+                    const hours = Math.floor(diffMinutes / 60);
+                    timeText = `${hours} jam yang lalu`;
+                    color = '#f59e0b';
+                } else {
+                    const days = Math.floor(diffMinutes / 1440);
+                    timeText = `${days} hari yang lalu`;
+                    color = '#ef4444';
+                }
+                
+                el.textContent = `Update: ${timeText}`;
+                el.style.color = color;
+                
+                // Add tooltip dengan waktu exact
+                el.title = `Tepat: ${date.toLocaleString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                })}`;
+                
+            } catch (error) {
+                el.textContent = `Update: ${timestamp}`;
+                el.style.color = '#6b7280';
+            }
+        }
+
+        function updateJarakDisplay(lokasiId, jarak) {
+            const jarakElements = document.querySelectorAll('.lokasi-jarak');
+            jarakElements.forEach((element) => {
+                const lokasiElement = element.closest('.lokasi-item');
+                if (lokasiElement) {
+                    const lokasiDataId = lokasiElement.getAttribute('data-id');
+                    if (lokasiDataId === lokasiId.toString()) {
+                        element.textContent = `${formatJarak(jarak)} dari lokasi Anda`;
+                        element.classList.remove('lokasi-jarak-loading');
+                    }
+                }
+            });
+        }
+
+        // ====== FUNGSI TOGGLE INFO OPERASIONAL ======
+        function toggleInfoOperasional(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                button.classList.remove('active');
+                icon.textContent = '🔽';
+            } else {
+                content.classList.add('expanded');
+                button.classList.add('active');
+                icon.textContent = '🔼';
+            }
+        }
+
+        // ====== PARKIR TERDEKAT ======
+        async function cariParkirTerdekat() {
+            const btn = document.getElementById('btnCari');
+            if (!btn) return;
+            
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = 'MENCARI...';
+            
+            try {
+                if (!userPosition) {
+                    await getLocation();
+                }
+                
+                if (distancesCache.size === 0) {
+                    await hitungSemuaJarak();
+                }
+                
+                // Sort berdasarkan jarak
+                const sortedData = [...dataParkir].sort((a, b) => {
+                    const jarakA = distancesCache.get(a.id) || Infinity;
+                    const jarakB = distancesCache.get(b.id) || Infinity;
+                    return jarakA - jarakB;
+                });
+                
+                dataParkir = sortedData;
+                renderLokasi();
+                
+                // Highlight yang terdekat
+                highlightClosestParking();
+                
+                // Show success notification
+                const closest = sortedData[0];
+                const jarak = distancesCache.get(closest.id);
+                showRefreshNotification(true, `Terdekat: ${closest.nama}`);
+                
+                console.log('✅ Parkir berhasil diurutkan berdasarkan jarak');
+                
+            } catch (error) {
+                console.error('Error mengurutkan parkir:', error);
+                
+                let errorMsg = 'Tidak dapat mengakses lokasi Anda.';
+                if (error.code === 1) {
+                    errorMsg = 'Izinkan akses lokasi untuk mengurutkan parkir terdekat.';
+                } else if (error.message.includes('Timeout')) {
+                    errorMsg = 'Waktu habis. Pastikan GPS aktif dan coba lagi.';
+                }
+                
+                showRefreshNotification(false, errorMsg);
+                
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        function highlightClosestParking() {
+            // Hapus highlight sebelumnya
+            document.querySelectorAll('.lokasi-item').forEach(item => {
+                item.classList.remove('closest');
+            });
+            
+            // Tambahkan highlight ke yang terdekat
+            const firstItem = document.querySelector('.lokasi-item');
+            if (firstItem) {
+                firstItem.classList.add('closest');
+            }
+        }
+
+        // ====== RENDER LOKASI ======
+        function renderLokasi() {
+            const container = document.getElementById('lokasiList');
+            if (!container) return;
+            
+            let html = '';
+            
+            dataParkir.forEach((lokasi, index) => {
+                const jarak = distancesCache.get(lokasi.id);
+                const jarakText = jarak ? 
+                    `${formatJarak(jarak)} dari lokasi Anda` : 
+                    'Mendeteksi lokasi...';
+                const jarakClass = jarak ? '' : 'lokasi-jarak-loading';
+                
+                const configLoc = locationsConfig?.locations.find(l => l.id === lokasi.id);
+                const isKridosono = lokasi.nama === "STADION KRIDOSONO";
+                const kridosonoClass = isKridosono ? ' kridosono' : '';
+                const kridosonoBadge = isKridosono ? '<span class="kridosono-badge">OPERASIONAL KHUSUS</span>' : '';
+                
+                // Ambil kapasitas dari data
+                let kapasitasBus = lokasi.bus?.available || lokasi.bus || 0;
+                let kapasitasMobil = lokasi.mobil?.available || lokasi.mobil || 0;
+                let kapasitasMotor = lokasi.motor?.available || lokasi.motor || 0;
+                
+                let totalBus = lokasi.bus?.total || lokasi.bus || 0;
+                let totalMobil = lokasi.mobil?.total || lokasi.mobil || 0;
+                let totalMotor = lokasi.motor?.total || lokasi.motor || 0;
+                
+                // Untuk Kridosono, gunakan data khusus dari config
+                if (isKridosono && configLoc) {
+                    const kapasitasHariIni = getKridosonoKapasitasHariIni(configLoc);
+                    kapasitasMobil = kapasitasHariIni.mobil;
+                    kapasitasMotor = kapasitasHariIni.motor;
+                    totalMobil = kapasitasHariIni.mobil === 0 ? 0 : (kapasitasHariIni.mobil === 30 ? 30 : 250);
+                    totalMotor = kapasitasHariIni.motor === 0 ? 0 : (kapasitasHariIni.motor === 150 ? 150 : 250);
+                }
+                
+                // Hitung persentase
+                const persenBus = totalBus > 0 ? Math.round((kapasitasBus / totalBus) * 100) : 0;
+                const persenMobil = totalMobil > 0 ? Math.round((kapasitasMobil / totalMobil) * 100) : 0;
+                const persenMotor = totalMotor > 0 ? Math.round((kapasitasMotor / totalMotor) * 100) : 0;
+                
+                // Tentukan status indicator berdasarkan persentase terendah
+                let statusClass = 'status-low';
+                const minPersentase = Math.min(
+                    totalBus > 0 ? persenBus : 100,
+                    totalMobil > 0 ? persenMobil : 100,
+                    totalMotor > 0 ? persenMotor : 100
+                );
+                
+                if (minPersentase === 0) {
+                    statusClass = 'status-full';
+                } else if (minPersentase < 20) {
+                    statusClass = 'status-high';
+                } else if (minPersentase < 50) {
+                    statusClass = 'status-medium';
+                }
+                
+                // Get vehicle icons from config
+                const vehicleIcons = locationsConfig?.vehicle_icons || { bus: '🚌', mobil: '🚗', motor: '🏍️' };
+                
+                html += `
+                    <div class="lokasi-item${kridosonoClass}" data-id="${lokasi.id}">
+                        <div class="status-indicator ${statusClass}"></div>
+                        <div class="lokasi-header">
+                            <div class="lokasi-nama">${lokasi.nama}${kridosonoBadge}</div>
+                            <div class="lokasi-id">${index + 1}</div>
+                        </div>
+                        <div class="lokasi-alamat">${lokasi.alamat}</div>
+                        <div class="lokasi-jarak ${jarakClass}">
+                            ${jarakText}
+                        </div>
+                        <div class="kapasitas-container">
+                `;
+                
+                // Tambahkan kapasitas dengan progress bar dan persentase
+                if (totalBus > 0) {
+                    const persenClass = getPercentageClass(persenBus);
+                    html += `
+                        <div class="kapasitas-item">
+                            <div class="kapasitas-header">
+                                <div class="kapasitas-icon bus">${vehicleIcons.bus}</div>
+                                <div class="kapasitas-label">Bus</div>
+                            </div>
+                            <div class="kapasitas-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill bus" style="width: ${persenBus}%"></div>
+                                </div>
+                                <div class="kapasitas-numbers">
+                                    <div class="kapasitas-available">${kapasitasBus} tersedia</div>
+                                    <div class="kapasitas-percentage ${persenClass}">${persenBus}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (totalMobil > 0) {
+                    const persenClass = getPercentageClass(persenMobil);
+                    html += `
+                        <div class="kapasitas-item">
+                            <div class="kapasitas-header">
+                                <div class="kapasitas-icon mobil">${vehicleIcons.mobil}</div>
+                                <div class="kapasitas-label">Mobil</div>
+                            </div>
+                            <div class="kapasitas-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill mobil" style="width: ${persenMobil}%"></div>
+                                </div>
+                                <div class="kapasitas-numbers">
+                                    <div class="kapasitas-available">${kapasitasMobil} tersedia</div>
+                                    <div class="kapasitas-percentage ${persenClass}">${persenMobil}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (totalMotor > 0) {
+                    const persenClass = getPercentageClass(persenMotor);
+                    html += `
+                        <div class="kapasitas-item">
+                            <div class="kapasitas-header">
+                                <div class="kapasitas-icon motor">${vehicleIcons.motor}</div>
+                                <div class="kapasitas-label">Motor</div>
+                            </div>
+                            <div class="kapasitas-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill motor" style="width: ${persenMotor}%"></div>
+                                </div>
+                                <div class="kapasitas-numbers">
+                                    <div class="kapasitas-available">${kapasitasMotor} tersedia</div>
+                                    <div class="kapasitas-percentage ${persenClass}">${persenMotor}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += `</div>`;
+                
+                // Tambahkan tombol dan konten info operasional khusus untuk Kridosono
+                if (isKridosono && configLoc) {
+                    const specialOp = configLoc.special_operation;
+                    if (specialOp) {
+                        html += `
+                            <button class="info-operasional-toggle" onclick="toggleInfoOperasional(this)">
+                                <span>INFO OPERASIONAL KHUSUS</span>
+                                <span class="toggle-icon">🔽</span>
+                            </button>
+                            
+                            <div class="info-operasional-content">
+                                <div class="operasional-simple">
+                                    <div class="periode-simple">
+                                        <div class="periode-title">${specialOp.period1}</div>
+                                        <div class="periode-waktu">${specialOp.opening_time}</div>
+                                        <div class="periode-kapasitas">
+                                            <span class="simple-badge mobil">
+                                                🚗 30 tersedia
+                                            </span>
+                                            <span class="simple-badge motor">
+                                                🏍️ 150 tersedia
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="periode-simple">
+                                        <div class="periode-title">${specialOp.period2}</div>
+                                        <div class="periode-waktu">${specialOp.opening_time}</div>
+                                        <div class="periode-kapasitas">
+                                            <span class="simple-badge mobil">
+                                                🚗 250 tersedia
+                                            </span>
+                                            <span class="simple-badge motor">
+                                                🏍️ 250 tersedia
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                html += `
+                        <div class="lokasi-actions">
+                            <button class="btn-action btn-map" onclick="bukaLokasiDiMaps('${lokasi.koordinat}', '${lokasi.nama}')">
+                                LIHAT DI MAPS
+                            </button>
+                            <button class="btn-action btn-route" onclick="ruteKeLokasi('${lokasi.koordinat}', '${lokasi.nama}')">
+                                RUTE KE SINI
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function getPercentageClass(percentage) {
+            if (percentage >= 60) return 'high';
+            if (percentage >= 30) return 'medium';
+            return 'low';
+        }
+
+        function getKridosonoKapasitasHariIni(configLoc) {
+            const today = new Date();
+            const year = today.getFullYear();
+            
+            // Tanggal referensi Operasi Ketupat 2026
+            const startPeriode1 = new Date(year, 3, 20); // 20 April
+            const endPeriode1 = new Date(year, 3, 22);   // 22 April
+            const startPeriode2 = new Date(year, 3, 23); // 23 April
+            const endPeriode2 = new Date(year, 3, 26);   // 26 April
+            
+            // Jika hari ini dalam periode operasional
+            if (today >= startPeriode1 && today <= endPeriode1) {
+                return { mobil: 30, motor: 150, periode: "Periode 1 (20-22 April 2026)" };
+            } else if (today >= startPeriode2 && today <= endPeriode2) {
+                return { mobil: 250, motor: 250, periode: "Periode 2 (23-26 April 2026)" };
+            } else {
+                return { mobil: 0, motor: 0, periode: "Tidak ada operasional khusus" };
+            }
+        }
+
+        // ====== MAPS FUNCTIONS ======
+        function bukaLokasiDiMaps(koordinat, nama) {
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(koordinat)}&query_place_id=${encodeURIComponent(nama)}`;
+            window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        function ruteKeLokasi(koordinat, nama) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const userLat = pos.coords.latitude;
+                        const userLng = pos.coords.longitude;
+                        const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${koordinat}&travelmode=driving&dir_action=navigate`;
+                        window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+                    },
+                    (error) => {
+                        alert('Tidak dapat mendeteksi lokasi Anda. Pastikan GPS aktif.');
+                        bukaLokasiDiMaps(koordinat, nama);
+                    }
+                );
+            } else {
+                alert('Browser tidak mendukung navigasi lokasi.');
+                bukaLokasiDiMaps(koordinat, nama);
+            }
+        }
+
+        // ====== PWA FUNCTIONS ======
+        function installPWA() {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                deferredInstallPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        closePWAInstall();
+                    }
+                    deferredInstallPrompt = null;
+                });
+            }
+        }
+
+        function closePWAInstall() {
+            const pwaInstall = document.getElementById('pwaInstall');
+            if (pwaInstall) {
+                pwaInstall.style.display = 'none';
+            }
+            localStorage.setItem('pwa_prompt_closed', 'true');
+        }
+
+        // ====== RESPONSIVE & DEVICE COMPATIBILITY ======
+        function handleResize() {
+            // Adjust layout untuk device yang sangat kecil
+            const isVerySmall = window.innerWidth < 400;
+            
+            document.querySelectorAll('.lokasi-item').forEach(item => {
+                if (isVerySmall) {
+                    item.style.padding = '16px';
+                } else {
+                    item.style.padding = '';
+                }
+            });
+        }
+
+        // ====== INITIALIZATION ======
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Initializing Parking System...');
+            
+            // Load locations config first
+            locationsConfig = await loadLocationsConfig();
+            
+            // Setup responsive handling
+            window.addEventListener('resize', handleResize);
+            handleResize(); // Initial call
+            
+            // Setup PWA
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredInstallPrompt = e;
+                
+                if (!localStorage.getItem('pwa_prompt_closed')) {
+                    setTimeout(() => {
+                        const pwaInstall = document.getElementById('pwaInstall');
+                        if (pwaInstall) {
+                            pwaInstall.style.display = 'flex';
+                        }
+                    }, 5000);
+                }
+            });
+            
+            // Service Worker Registration
+            if ('serviceWorker' in navigator) {
+                try {
+                    await navigator.serviceWorker.register('/sw.js');
+                    console.log('✅ Service Worker registered');
+                } catch (error) {
+                    console.log('Service Worker registration failed:', error);
+                }
+            }
+            
+            // Load data pertama kali
+            showLoading('Memuat data parkir...');
+            try {
+                await loadDataFromGitHub();
+                
+                // Coba dapatkan lokasi user
+                try {
+                    await getLocation();
+                    await hitungSemuaJarak();
+                } catch (error) {
+                    console.log('📍 Lokasi tidak tersedia:', error.message);
+                }
+                
+            } catch (error) {
+                console.error('Failed to load initial data:', error);
+            } finally {
+                hideLoading();
+            }
+            
+            // Setup auto-refresh
+            refreshInterval = setInterval(async () => {
+                try {
+                    await loadDataFromGitHub();
+                } catch (error) {
+                    console.log('Auto refresh gagal:', error.message);
+                }
+            }, CONFIG.AUTO_REFRESH_INTERVAL);
+            
+            // Refresh saat tab/window aktif
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    loadDataFromGitHub();
+                }
+            });
+            
+            // Online/offline detection
+            window.addEventListener('online', function() {
+                loadDataFromGitHub();
+                showRefreshNotification(true, 'Koneksi kembali');
+            });
+            
+            window.addEventListener('offline', function() {
+                showRefreshNotification(false, 'Anda offline');
+            });
+            
+            // Touch device optimizations
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+                // Increase tap targets for mobile
+                document.querySelectorAll('.btn-action, .btn-primary').forEach(btn => {
+                    btn.style.minHeight = '52px';
+                });
+            }
+            
+            // Log readiness
+            console.log('✅ Parking System Ready!');
+            console.log('📱 Device:', navigator.userAgent);
+            console.log('🔄 Auto-refresh:', CONFIG.AUTO_REFRESH_INTERVAL / 1000, 'seconds');
+            console.log('📊 Total locations:', dataParkir.length);
+        });
+
+        // ====== CLEANUP ======
+        window.addEventListener('beforeunload', function() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>
+[file content end]
